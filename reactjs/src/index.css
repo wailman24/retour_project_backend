@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.alert {
+    padding: 1rem;
+    background-color: #ff4040;
+    color: white;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
