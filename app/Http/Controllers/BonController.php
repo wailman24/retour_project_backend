@@ -45,7 +45,7 @@ class BonController extends Controller
      */
     public function show(Bon $bon)
     {
-        //
+        return new BonsResource($bon);
     }
 
     /**

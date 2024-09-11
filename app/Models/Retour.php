@@ -28,6 +28,13 @@ class Retour extends Model
             ->withPivot('issue_id');
     }
 
+    // Defining the relationship with the Issue model
+    public function issues()
+    {
+        // Assuming 'piece_issue_reteur' is the pivot table connecting pieces and issues
+        return $this->belongsToMany(Issue::class, 'piece_issue_reteur', 'retour_id', 'issue_id');
+    }
+
     public function bons()
     {
         return $this->belongsToMany(Bon::class, 'bon_retour', 'retour_id', 'bon_id');

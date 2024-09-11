@@ -125,7 +125,7 @@ class RetourController extends Controller
             'pieces.*.id' => 'required|exists:pieces,id',
             'pieces.*.issues' => 'required|array',
             'pieces.*.issues.*' => 'required|exists:issues,id',
-            'product_id' => 'required',
+            'product_id' => 'required|exists:products,id',
             'bon_id' => 'required|exists:bons,id'
         ]);
 
@@ -148,7 +148,7 @@ class RetourController extends Controller
             }
         }
         // Attach the bon_id to the retour in the pivot table
-        $retour->bons()->sync($request->bon_id);
+        $retour->bons()->attach($request->bon_id);
 
 
         // Load related issues and bons for proper inclusion in the resource

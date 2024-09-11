@@ -89,6 +89,24 @@ class ProductController extends Controller
         return new ProductsResource($product);
     }
 
+    public function updateDist(Request $request, $id)
+    {
+        $request->validate([
+            'dist_id' => 'required|integer',
+        ]);
+
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        $product->dist_id = $request->dist_id;
+        $product->save();
+
+        return response()->json(['message' => 'Product updated successfully'], 200);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

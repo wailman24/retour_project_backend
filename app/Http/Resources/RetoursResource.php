@@ -22,7 +22,8 @@ class RetoursResource extends JsonResource
             'id' => $this->id,
             'guarante' => $this->guarante,
             'status' => $this->status,
-            'product_id' => $this->product_id
+            'product_id' => $this->product_id,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }
 }

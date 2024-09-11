@@ -20,7 +20,7 @@ export default function Crtretours() {
     const [availablePieces, setAvailablePieces] = useState([]);
     const [currentPiece, setCurrentPiece] = useState({ id: "", issues: [] });
     const [errors, setErrors] = useState({});
-    const [status, useStatus] = useState("");
+    const [status, setStatus] = useState("");
     //const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const { bonId } = useParams();
@@ -69,16 +69,30 @@ export default function Crtretours() {
     useEffect(() => {
         getBon();
     }, []);
-
     const getBon = () => {
         setLoading(true);
         axiosClient
             .get(`/bons/${bonId}`)
-            .then(({ data }) => {
+            .then((response) => {
                 setLoading(false);
-                setBon(data.data);
+                console.log("Full response from API:", response); // Log full response
+                if (response.data && response.data.data) {
+                    setBon(response.data.data); // Adjust according to actual data structure
+                    console.log(
+                        "Bon fetched successfully:",
+                        response.data.data
+                    );
+                } else {
+                    console.warn(
+                        "Bon data is missing or in unexpected format:",
+                        response.data
+                    );
+                    setBon(null); // Handle missing data gracefully
+                }
             })
             .catch((err) => {
+                setLoading(false);
+                console.error("Error fetching bon:", err);
                 const response = err.response;
                 if (response && response.status === 422) {
                     setErrors(response.data.errors);
@@ -118,16 +132,31 @@ export default function Crtretours() {
         setLoading(false);
     };
 
-    const [productUpdate, setproductUpdate] = useState({
-        dist_id: bon.dist_id,
-    });
-
-    const handleSubmit = (ev) => {
-        if (user.role_id == 1) {
-            useStatus("A");
+    useEffect(() => {
+        if (user.role_id === 1) {
+            setStatus("A");
         }
+    }, [user.role_id]);
+
+    const handleSubmit = async (ev) => {
         ev.preventDefault();
-        const payload = {
+
+        /*   if (user.role_id === 1) {
+            setStatus("A");
+        } */
+        console.log("Bon object:", bon);
+        const productPayload = {
+            dist_id: bon?.dist_id, // Use optional chaining to safely access dist_id
+        };
+
+        // Check if bon and product are defined
+        if (!bon || !product) {
+            alert("Bon or product is not available. Please check your input.");
+            return;
+        }
+
+        // Prepare payloads
+        const retourPayload = {
             guarante,
             status: status,
             name,
@@ -135,28 +164,42 @@ export default function Crtretours() {
             product_id: product.id,
             bon_id: bonId,
         };
-        console.log(payload);
-        axiosClient
-            .post("/retours", payload)
-            .then((data) => {
-                setRetour(data.data);
-                alert("Retour submitted successfully!");
-                window.location.reload();
-            })
-            .catch(handleError);
 
-        axiosClient
-            .put(`/products/${product.id}`, product)
-            .then(() => {
-                //setIsOpenU(!isOpenU);
-                window.location.reload();
-            })
-            .catch((err) => {
-                const response = err.response;
-                if (response && response.status === 422) {
-                    setErrors(response.data.errors);
+        try {
+            // Update product
+            await axiosClient.put(`/updateDist/${product.id}`, productPayload);
+            alert("Product updated successfully!");
+            // Submit retour
+            const retourResponse = await axiosClient.post(
+                "/retours",
+                retourPayload
+            );
+            setRetour(retourResponse.data);
+            alert("Retour submitted successfully!");
+
+            // Reload the page once after both requests succeed
+            window.location.reload();
+        } catch (error) {
+            console.error(
+                "Error submitting retour or updating product:",
+                error
+            );
+
+            // Handle specific error responses
+            if (error.response) {
+                if (error.response.status === 422) {
+                    setErrors(error.response.data.errors);
+                } else {
+                    alert(
+                        "An error occurred while processing your request. Please try again."
+                    );
                 }
-            });
+            } else {
+                alert(
+                    "An unexpected error occurred. Please check your network or server."
+                );
+            }
+        }
     };
 
     const handleAddPiece = () => {

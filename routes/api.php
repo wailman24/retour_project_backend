@@ -46,6 +46,7 @@ Route::middleware(['auth:api', 'checkUserId'])->group(function () {
     Route::apiResources(['users' => UserController::class]);
     Route::apiResources(['modals' => ModalController::class]);
     Route::apiResources(['products' => ProductController::class]);
+    Route::put('updateDist/{id}', [ProductController::class, 'updateDist']);
     Route::apiResources(['distributeurs' => DistributeurController::class]);
     Route::apiResources(['pieces' => PieceController::class]);
     Route::apiResources(['stocks' => StockController::class]);

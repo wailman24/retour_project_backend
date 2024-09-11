@@ -35,6 +35,7 @@ class BonsResource extends JsonResource
         }
         return [
             'id' => $this->id,
+            'dist_id' => $this->dist_id,
             'distributeur' => $userName,
             'date' => $this->created_at->format('Y-m-d H:i:s'),
         ];

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->enum('guarante', ['HG', 'SG']);
             $table->enum('status', ['A', 'B', 'C']);
             $table->string('name');
-            $table->foreignId('piece_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
