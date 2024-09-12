@@ -52,6 +52,13 @@ class PieceController extends Controller
         return new PiecesResource($piece);
     }
 
+    public function pieceofproduct($id)
+    {
+        $pcs = Piece::where('product_id', $id)->get();
+
+        return PiecesResource::collection($pcs);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

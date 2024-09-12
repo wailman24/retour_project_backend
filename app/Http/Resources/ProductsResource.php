@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use App\Models\Distributeur;
+use App\Models\Prodname;
 
 class ProductsResource extends JsonResource
 {
@@ -17,10 +18,18 @@ class ProductsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $m_name = DB::table('modals')
-            ->where('id', $this->modal_id)
+
+        $p_name = DB::table('prodnames')
+            ->where('id', $this->name_id)
             ->value('name');
 
+        $prodname = Prodname::find($this->name_id);
+        if ($prodname) {
+            // Get the user associated with the distributeur
+            $modal = DB::table('modals')
+                ->where('id', $prodname->modal_id)
+                ->value('name');
+        }
         // Find the distributeur
         $distributeur = Distributeur::find($this->dist_id);
 
@@ -41,9 +50,10 @@ class ProductsResource extends JsonResource
         }
         return [
             'id' => (string)$this->id,
-            'name' => $this->name,
+            'name_id' => $this->name_id,
+            'name' => $p_name,
             'Imei' => $this->Imei,
-            'modal' => $m_name,
+            'modal' => $modal,
             'distributeur' => $userName,
             //'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];

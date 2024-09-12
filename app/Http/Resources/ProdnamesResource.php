@@ -2,13 +2,11 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Prodname;
-use App\Models\Product;
-use App\Models\Stock;
+use App\Models\Modal;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PiecesResource extends JsonResource
+class ProdnamesResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,16 +15,15 @@ class PiecesResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $prod = Prodname::find($this->product_id);
+        $mod = Modal::find($this->modal_id);
         /* $piece_id = Piece::where('name', $name)
         ->where('product_id', $product_id)
         ->value('id'); */
-        $quantity = Stock::where('piece_id', $this->id)->count();
+
         return [
             'id' => (string)$this->id,
             'name' => $this->name,
-            'product' => $prod->name,
-            'quantity' => $quantity,
+            'modal' => $mod->name,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }

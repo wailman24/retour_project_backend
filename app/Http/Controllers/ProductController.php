@@ -33,15 +33,15 @@ class ProductController extends Controller
     {
         try {
             $request->validate([
-                'name' => 'bail|required|unique:products',
+                'name_id' => 'bail|required',
                 'Imei' => 'bail|required|unique:products',
-                'modal_id' => 'required',
+
                 'dist_id' => ''
             ]);
             $product = Product::create([
-                'name' => $request->name,
+                'name_id' => $request->name_id,
                 'Imei' => $request->Imei,
-                'modal_id' => $request->modal_id,
+
                 'dist_id' => $request->dist_id
             ]);
         } catch (\Throwable $caught) {
@@ -75,14 +75,13 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'bail|required|unique:products',
-            'modal_id' => 'required|exists:modals,id',
+            'name_id' => 'bail|required',
+
         ]);
 
         $product->update([
-            'name' => $request->name,
+            'name_id' => $request->name_id,
 
-            'modal_id' => $request->modal_id,
 
         ]);
 

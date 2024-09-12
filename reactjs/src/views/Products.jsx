@@ -30,7 +30,7 @@ export default function Products() {
     };
 
     ///
-    const [modals, setModals] = useState([]);
+    const [names, setNames] = useState([]);
     const [distributeurs, setDistributeurs] = useState([]);
 
     /*     const itemsPerPage = 10; // Number of items per page
@@ -67,7 +67,7 @@ export default function Products() {
     }, []);
 
     useEffect(() => {
-        getModals();
+        getNames();
     }, []);
 
     useEffect(() => {
@@ -89,13 +89,13 @@ export default function Products() {
             });
     };
 
-    const getModals = () => {
+    const getNames = () => {
         setLoading(true);
         axiosClient
-            .get("/modals")
+            .get("/prodnames")
             .then(({ data }) => {
                 setLoading(false);
-                setModals(data.data);
+                setNames(data.data);
             })
             .catch(() => {
                 setLoading(false);
@@ -116,16 +116,15 @@ export default function Products() {
     };
 
     const nameRef = useRef();
-    const modalidRef = useRef();
+
     const ImeiRef = useRef();
     //const distidRef = useRef();
     //add user
     const onSubmit = (ev) => {
         ev.preventDefault();
         const payload = {
-            name: nameRef.current.value,
+            name_id: nameRef.current.value,
             Imei: ImeiRef.current.value,
-            modal_id: modalidRef.current.value,
             //dist_id: distidRef.current.value,
         };
         axiosClient
@@ -145,9 +144,9 @@ export default function Products() {
     //// DELETE USER
     const [DeleteProduct, setDeleteProduct] = useState({
         id: null,
-        name: "",
+        name_id: "",
         Imei: "",
-        modal_id: "",
+
         //dist_id: "",
     });
     const [isOpenD, setIsOpenD] = useState(false);
@@ -168,9 +167,9 @@ export default function Products() {
 
     const [productUpdate, setproductUpdate] = useState({
         id: null,
-        name: "",
+        name_id: "",
         Imei: "",
-        modal_id: "",
+
         //dist_id: "",
     });
 
@@ -278,24 +277,6 @@ export default function Products() {
                                                     </div>
                                                 )}
                                                 <div className="grid gap-4 mb-4 sm:grid-cols-2">
-                                                    <div>
-                                                        <label
-                                                            htmlFor="name"
-                                                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                                        >
-                                                            name
-                                                        </label>
-                                                        <input
-                                                            ref={nameRef}
-                                                            type="text"
-                                                            name="name"
-                                                            id="name"
-                                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                            placeholder="Type product name"
-                                                            required=""
-                                                        />
-                                                    </div>
-
                                                     <div className="grid gap-4 mb-4 sm:grid-cols-2">
                                                         <div>
                                                             <label
@@ -320,14 +301,14 @@ export default function Products() {
                                                                 htmlFor="role"
                                                                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                                             >
-                                                                modal
+                                                                name
                                                             </label>
                                                             <select
-                                                                ref={modalidRef}
+                                                                ref={nameRef}
                                                                 id="modal"
                                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                             >
-                                                                {modals.map(
+                                                                {names.map(
                                                                     (m) => (
                                                                         <option
                                                                             key={
@@ -426,37 +407,10 @@ export default function Products() {
                                                 <div className="grid gap-4 mb-4 sm:grid-cols-2">
                                                     <div>
                                                         <label
-                                                            htmlFor="name"
-                                                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                                        >
-                                                            name
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            name="name"
-                                                            id="name"
-                                                            value={
-                                                                productUpdate.name
-                                                            }
-                                                            onChange={(ev) =>
-                                                                setproductUpdate(
-                                                                    {
-                                                                        ...productUpdate,
-                                                                        name: ev
-                                                                            .target
-                                                                            .value,
-                                                                    }
-                                                                )
-                                                            }
-                                                            className="block w-full p-2.5 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label
                                                             htmlFor="modal"
                                                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                                         >
-                                                            modal
+                                                            name
                                                         </label>
                                                         <select
                                                             id="client"
@@ -464,7 +418,7 @@ export default function Products() {
                                                                 setproductUpdate(
                                                                     {
                                                                         ...productUpdate,
-                                                                        modal_id:
+                                                                        name_id:
                                                                             ev
                                                                                 .target
                                                                                 .value,
@@ -475,10 +429,9 @@ export default function Products() {
                                                         >
                                                             <option /* selected="" */
                                                             >
-                                                                Select modal
-                                                                name
+                                                                Select name
                                                             </option>
-                                                            {modals.map((m) => (
+                                                            {names.map((m) => (
                                                                 <option
                                                                     key={m.id}
                                                                     value={m.id}

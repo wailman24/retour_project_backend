@@ -8,18 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'Imei', 'modal_id'];
+    protected $fillable = ['name_id', 'Imei', 'dist_id'];
 
-    public function modals()
+
+    public function prodnames()
     {
-        return $this->belongsTo(Modal::class);
+        return $this->belongsTo(Prodname::class);
     }
-
-    public function pieces()
-    {
-        return $this->hasMany(Piece::class);
-    }
-
     public function retours()
     {
         return $this->hasMany(Retour::class);

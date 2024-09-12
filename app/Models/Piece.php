@@ -10,9 +10,9 @@ class Piece extends Model
     use HasFactory;
     protected $fillable = ['name', 'product_id', 'quantity'];
 
-    public function products()
+    public function prodnames()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Prodname::class);
     }
 
     public function stocks()

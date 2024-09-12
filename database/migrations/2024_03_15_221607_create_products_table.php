@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->unsignedBigInteger('name_id');
             $table->string('Imei')->unique();
             $table->unsignedBigInteger('dist_id')->nullable();
+
+            $table->foreign('name_id')->references('id')->on('prodnames')->onDelete('cascade');
             $table->foreign('dist_id')->references('id')->on('distributeurs')->onDelete('cascade');
-            $table->foreignId('modal_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ import MagazPieces from "./views/MagazPieces.jsx";
 import Stocks from "./views/Stocks.jsx";
 import Bons from "./views/Bons.jsx";
 import Crtretours from "./views/Crtretours.jsx";
+import ProductsName from "./views/ProductsName.jsx";
 //import UserForm from "./views/UserForm";
 
 const router = createBrowserRouter([
@@ -66,6 +67,14 @@ const router = createBrowserRouter([
                 element: (
                     <PrivateRoute requiredRole={1}>
                         <Modals />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: "/prodnames",
+                element: (
+                    <PrivateRoute requiredRole={1}>
+                        <ProductsName />
                     </PrivateRoute>
                 ),
             },

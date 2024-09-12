@@ -6,7 +6,7 @@ import Select from "react-select";
 
 export default function Crtretours() {
     const { user, token, setUser, setToken } = useStateContext();
-
+    const [showAddPieceSection, setShowAddPieceSection] = useState(false);
     const [guarante, setGuarante] = useState("");
     const [name, setName] = useState("");
     const [clicked, setClicked] = useState(false);
@@ -19,11 +19,36 @@ export default function Crtretours() {
     const [availableIssues, setAvailableIssues] = useState([]);
     const [availablePieces, setAvailablePieces] = useState([]);
     const [currentPiece, setCurrentPiece] = useState({ id: "", issues: [] });
+    const [names, setNames] = useState([]);
     const [errors, setErrors] = useState({});
     const [status, setStatus] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
     //const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const { bonId } = useParams();
+    const toggleModal = () => {
+        setIsOpen(!isOpen);
+    };
+    const handleToggleShowAddPiece = () => {
+        if (product) {
+            setShowAddPieceSection(!showAddPieceSection);
+            axiosClient
+                .get(`/pieceofproduct/${product.name_id}`)
+                .then(({ data }) => {
+                    const formattedOptions = data.data.map((piece) => ({
+                        value: piece.id,
+                        label: piece.name,
+                    }));
+                    console.log(product.name_id);
+                    setAvailablePieces(formattedOptions);
+                    setLoading(false);
+                })
+                .catch(handleError);
+        } else {
+            alert("you have to search for the product");
+        }
+    };
+
     useEffect(() => {
         axiosClient.get("/user").then(({ data }) => {
             setUser(data);
@@ -32,7 +57,7 @@ export default function Crtretours() {
 
     useEffect(() => {
         getIssues();
-        getPieces();
+        //getPieces();
     }, []);
 
     const getIssues = () => {
@@ -51,19 +76,20 @@ export default function Crtretours() {
             .catch(handleError);
     };
 
-    const getPieces = () => {
+    useEffect(() => {
+        getNames();
+    }, []);
+    const getNames = () => {
         setLoading(true);
         axiosClient
-            .get("/pieces")
+            .get("/prodnames")
             .then(({ data }) => {
-                const formattedOptions = data.data.map((piece) => ({
-                    value: piece.id,
-                    label: piece.name,
-                }));
-                setAvailablePieces(formattedOptions);
                 setLoading(false);
+                setNames(data.data);
             })
-            .catch(handleError);
+            .catch(() => {
+                setLoading(false);
+            });
     };
 
     useEffect(() => {
@@ -104,6 +130,12 @@ export default function Crtretours() {
 
     const fetchProductByIMEI = (ev) => {
         ev.preventDefault();
+        // Check if IMEI is not empty before proceeding
+        if (imei.trim() === "") {
+            alert("IMEI field is empty.");
+            return; // Exit the function if IMEI is empty
+        }
+
         const payload = {
             Imei: imei,
         };
@@ -112,17 +144,38 @@ export default function Crtretours() {
             .post("/searchbyimei", payload)
             .then(({ data }) => {
                 if (data.data.length > 0) {
-                    setProduct(data.data[0]); // Assuming an array is returned and you want the first product
-                    setClicked(true);
+                    setProduct(data.data[0]); // Assuming the response is an array and you want the first product
+                    setClicked(true); // Set clicked to true when a product is found
                 } else {
                     setProduct(null);
+                    setClicked(true); // Still set clicked to true even if no product is found
                 }
             })
             .catch((err) => {
                 console.error("Error fetching product by IMEI:", err);
                 setProduct(null);
+                setClicked(true); // Set clicked to true even if there's an error
+            })
+            .finally(() => {
+                setLoading(false);
             });
     };
+    /* 
+    const getPieces = () => {
+        setLoading(true);
+        axiosClient
+            .get(`/pieceofproduct/${product.id}`)
+            .then(({ data }) => {
+                const formattedOptions = data.data.map((piece) => ({
+                    value: piece.id,
+                    label: piece.name,
+                }));
+                console.log(data.data);
+                setAvailablePieces(formattedOptions);
+                setLoading(false);
+            })
+            .catch(handleError);
+    }; */
 
     const handleError = (err) => {
         const response = err.response;
@@ -202,6 +255,35 @@ export default function Crtretours() {
         }
     };
 
+    const nameRef = useRef();
+
+    const ImeiRef = useRef();
+    //const distidRef = useRef();
+    //add user
+    const onSubmit = (ev) => {
+        ev.preventDefault();
+        const payload = {
+            name_id: nameRef.current.value,
+            Imei: ImeiRef.current.value,
+
+            dist_id: bon?.dist_id,
+        };
+        axiosClient
+            .post("/products", payload)
+            .then(({ data }) => {
+                console.log(data);
+                setIsOpen(!isOpen);
+                setProduct(data.data); // Assuming the response is an array and you want the first product
+                setClicked(true);
+            })
+            .catch((err) => {
+                const response = err.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
+            });
+    };
+
     const handleAddPiece = () => {
         if (currentPiece.id && currentPiece.issues.length > 0) {
             setPieces([...pieces, currentPiece]);
@@ -244,157 +326,6 @@ export default function Crtretours() {
                     Retour {bonId}
                 </h2>
                 <form className="space-y-8" onSubmit={handleSubmit}>
-                    <div className="flex flex-col">
-                        <label className="mb-2 font-semibold">Guarante:</label>
-                        <input
-                            type="text"
-                            value={guarante}
-                            onChange={(e) => setGuarante(e.target.value)}
-                            required
-                            className="border border-gray-300 p-2 rounded w-full"
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <label className="mb-2 font-semibold">Name:</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="border border-gray-300 p-2 rounded w-full"
-                        />
-                    </div>
-                    <div className="border p-4 rounded-md mb-4">
-                        <h3 className="font-bold text-lg mb-2">
-                            Piece Selector
-                        </h3>
-                        <div className="mb-2">
-                            <label className="block mb-1 font-semibold">
-                                Piece:
-                            </label>
-                            <Select
-                                options={availablePieces}
-                                onChange={handlePieceChange}
-                                placeholder="Select a piece"
-                            />
-                        </div>
-                        <div className="mb-2">
-                            <label className="block mb-1 font-semibold">
-                                Issues:
-                            </label>
-                            <Select
-                                isMulti
-                                options={availableIssues}
-                                onChange={handleIssueChange}
-                                placeholder="Select issues"
-                            />
-                            <ul className="mt-2 list-disc pl-5">
-                                {currentPiece.issues.map((issueId) => {
-                                    const issue = availableIssues.find(
-                                        (issue) => issue.value === issueId
-                                    );
-                                    return (
-                                        <li
-                                            key={issueId}
-                                            className="flex justify-between items-center mb-1"
-                                        >
-                                            {issue
-                                                ? issue.label
-                                                : `Issue ${issueId}`}
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeIssue(issueId)
-                                                }
-                                                className="ml-2 bg-red-500 text-white px-2 py-1 rounded-md"
-                                            >
-                                                Remove
-                                            </button>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={handleAddPiece}
-                            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-                        >
-                            Add Piece
-                        </button>
-                    </div>
-                    <ul className="mt-4">
-                        {pieces.map((piece, index) => (
-                            <li
-                                key={index}
-                                className="border p-2 rounded-md mb-2 flex justify-between items-center"
-                            >
-                                <span>
-                                    Piece:{" "}
-                                    {
-                                        availablePieces.find(
-                                            (p) => p.value === piece.id
-                                        )?.label
-                                    }
-                                    , Issues:{" "}
-                                    {piece.issues
-                                        .map(
-                                            (issueId) =>
-                                                availableIssues.find(
-                                                    (issue) =>
-                                                        issue.value === issueId
-                                                )?.label
-                                        )
-                                        .join(", ")}
-                                </span>
-                                <button
-                                    type="button"
-                                    onClick={() => removePiece(index)}
-                                    className="ml-4 bg-red-500 text-white px-2 py-1 rounded-md"
-                                >
-                                    Delete
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                    {/* <div className="flex flex-col">
-                        <label className="mb-2 font-semibold">IMEI:</label>
-                        <input
-                            type="text"
-                            //ref={imeiRef}
-                            onChange={(e) => setImei(e.target.value)}
-                            className="border border-gray-300 p-2 rounded w-full"
-                            placeholder="Enter IMEI"
-                        />
-                        <button
-                            type="button"
-                            onClick={fetchProductByIMEI}
-                            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md"
-                            disabled={loading || !imei}
-                        >
-                            {loading ? "Searching..." : "Search"}
-                        </button>
-
-                        {error && <p className="mt-2 text-red-500">{error}</p>}
-
-                        {product ? (
-                            <p className="mt-2 text-green-500">
-                                Product Found: {product.name}
-                            </p>
-                        ) : (
-                            imei &&
-                            !loading &&
-                            !product && (
-                                <button
-                                    type="button"
-                                    onClick={addNewProduct}
-                                    className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded-md"
-                                >
-                                    Add New Product
-                                </button>
-                            )
-                        )}
-                    </div> */}
                     <label
                         htmlFor="default-search"
                         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -442,12 +373,265 @@ export default function Crtretours() {
                     {!product && clicked && (
                         <button
                             type="button"
-                            onClick={() => console.log("Add new product")}
+                            onClick={toggleModal}
                             className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded-md"
                         >
                             Add New Product
                         </button>
                     )}
+
+                    {isOpen && (
+                        <div
+                            id="defaultModal"
+                            tabIndex="-1"
+                            aria-hidden="true"
+                            className="fixed inset-0 z-50 flex justify-center items-center w-full h-full overflow-y-auto overflow-x-hidden bg-gray-900 bg-opacity-50"
+                        >
+                            <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
+                                {/* Modal content */}
+                                <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+                                    {/* Modal header */}
+                                    <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                            Add Products
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                            onClick={toggleModal}
+                                        >
+                                            <svg
+                                                aria-hidden="true"
+                                                className="w-5 h-5"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                ></path>
+                                            </svg>
+                                            <span className="sr-only">
+                                                Close modal
+                                            </span>
+                                        </button>
+                                    </div>
+                                    {/* Modal body */}
+                                    <form onSubmit={onSubmit}>
+                                        {errors && (
+                                            <div className="alert">
+                                                {Object.keys(errors).map(
+                                                    (key) => (
+                                                        <p key={key}>
+                                                            {errors[key][0]}
+                                                        </p>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                        <div className="grid gap-4 mb-4 sm:grid-cols-2">
+                                            <div className="grid gap-4 mb-4 sm:grid-cols-2">
+                                                <div>
+                                                    <label
+                                                        htmlFor="Imei"
+                                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        Imei
+                                                    </label>
+                                                    <input
+                                                        ref={ImeiRef}
+                                                        type="text"
+                                                        name="Imei"
+                                                        id="Imei"
+                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                                        placeholder="Type product Imei"
+                                                        required=""
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label
+                                                        htmlFor="role"
+                                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                                    >
+                                                        name
+                                                    </label>
+                                                    <select
+                                                        ref={nameRef}
+                                                        id="modal"
+                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                                    >
+                                                        {names.map((m) => (
+                                                            <option
+                                                                key={m.id}
+                                                                value={m.id}
+                                                            >
+                                                                {m.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t border-gray-300 dark:border-gray-600 mt-4 pt-4">
+                                            <button
+                                                onClick={onSubmit}
+                                                type="submit"
+                                                className="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none dark:focus:ring-blue-800"
+                                            >
+                                                <svg
+                                                    className="mr-1 -ml-1 w-6 h-6"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                                        clipRule="evenodd"
+                                                    ></path>
+                                                </svg>
+                                                Add new Products
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex flex-col">
+                        <label className="mb-2 font-semibold">Guarante:</label>
+                        <input
+                            type="text"
+                            value={guarante}
+                            onChange={(e) => setGuarante(e.target.value)}
+                            required
+                            className="border border-gray-300 p-2 rounded w-full"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <label className="mb-2 font-semibold">Name:</label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            className="border border-gray-300 p-2 rounded w-full"
+                        />
+                    </div>
+
+                    {/* Button to show/hide the piece section */}
+                    <button
+                        type="button"
+                        onClick={handleToggleShowAddPiece}
+                        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md"
+                    >
+                        {showAddPieceSection
+                            ? "Hide Add Piece Section"
+                            : "Show Add Piece Section"}
+                    </button>
+
+                    {/* Conditional rendering of the piece section */}
+                    {showAddPieceSection && (
+                        <div className="border p-4 rounded-md mb-4">
+                            <h3 className="font-bold text-lg mb-2">
+                                Piece Selector
+                            </h3>
+                            <div className="mb-2">
+                                <label className="block mb-1 font-semibold">
+                                    Piece:
+                                </label>
+                                <Select
+                                    options={availablePieces}
+                                    onChange={handlePieceChange}
+                                    placeholder="Select a piece"
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="block mb-1 font-semibold">
+                                    Issues:
+                                </label>
+                                <Select
+                                    isMulti
+                                    options={availableIssues}
+                                    onChange={handleIssueChange}
+                                    placeholder="Select issues"
+                                />
+                                <ul className="mt-2 list-disc pl-5">
+                                    {currentPiece.issues.map((issueId) => {
+                                        const issue = availableIssues.find(
+                                            (issue) => issue.value === issueId
+                                        );
+                                        return (
+                                            <li
+                                                key={issueId}
+                                                className="flex justify-between items-center mb-1"
+                                            >
+                                                {issue
+                                                    ? issue.label
+                                                    : `Issue ${issueId}`}
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeIssue(issueId)
+                                                    }
+                                                    className="ml-2 bg-red-500 text-white px-2 py-1 rounded-md"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleAddPiece}
+                                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md"
+                            >
+                                Add Piece
+                            </button>
+                        </div>
+                    )}
+
+                    <ul className="mt-4">
+                        {pieces.map((piece, index) => (
+                            <li
+                                key={index}
+                                className="border p-2 rounded-md mb-2 flex justify-between items-center"
+                            >
+                                <span>
+                                    Piece:{" "}
+                                    {
+                                        availablePieces.find(
+                                            (p) => p.value === piece.id
+                                        )?.label
+                                    }
+                                    , Issues:{" "}
+                                    {piece.issues
+                                        .map(
+                                            (issueId) =>
+                                                availableIssues.find(
+                                                    (issue) =>
+                                                        issue.value === issueId
+                                                )?.label
+                                        )
+                                        .join(", ")}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => removePiece(index)}
+                                    className="ml-4 bg-red-500 text-white px-2 py-1 rounded-md"
+                                >
+                                    Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
 
                     <button
                         type="submit"

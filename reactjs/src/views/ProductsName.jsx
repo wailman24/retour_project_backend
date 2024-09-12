@@ -12,7 +12,7 @@ import {
     DropdownMenuSeparator,
 } from "@radix-ui/react-dropdown-menu";
 
-export default function Pieces() {
+export default function ProductsName() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
 
@@ -30,7 +30,7 @@ export default function Pieces() {
     };
 
     ///
-    const [products, setProducts] = useState([]);
+    const [modals, setModals] = useState([]);
 
     /*     const itemsPerPage = 10; // Number of items per page
     const [currentPage, setCurrentPage] = useState(1);
@@ -52,24 +52,18 @@ export default function Pieces() {
             setCurrentPage(currentPage - 1);
         }
     }; */
-
-    //search
-    const [search_name, setSearch_name] = useState("");
-    const [search_product, setSearch_product] = useState("");
-    const [search_date, setSearch_date] = useState("");
-
-    const [pieces, setPieces] = useState([]);
+    const [prods, setProds] = useState([]);
     useEffect(() => {
-        getPieces();
+        getProds();
     }, []);
 
-    const getPieces = () => {
+    const getProds = () => {
         setLoading(true);
         axiosClient
-            .get("/pieces")
+            .get("/prodnames")
             .then(({ data }) => {
                 setLoading(false);
-                setPieces(data.data);
+                setProds(data.data);
             })
             .catch((err) => {
                 const response = err.response;
@@ -78,17 +72,22 @@ export default function Pieces() {
                 }
             });
     };
+    //search
+    const [search_name, setSearch_name] = useState("");
+    const [search_modal, setSearch_modal] = useState("");
+    const [search_date, setSearch_date] = useState("");
+
     useEffect(() => {
-        getProducts();
+        getModals();
     }, []);
 
-    const getProducts = () => {
+    const getModals = () => {
         setLoading(true);
         axiosClient
-            .get("/prodnames")
+            .get("/modals")
             .then(({ data }) => {
                 setLoading(false);
-                setProducts(data.data);
+                setModals(data.data);
             })
             .catch((err) => {
                 const response = err.response;
@@ -99,17 +98,17 @@ export default function Pieces() {
     };
 
     const nameRef = useRef();
-    const productidRef = useRef();
+    const modalidRef = useRef();
 
     //add user
     const onSubmit = (ev) => {
         ev.preventDefault();
         const payload = {
             name: nameRef.current.value,
-            product_id: productidRef.current.value,
+            modal_id: modalidRef.current.value,
         };
         axiosClient
-            .post("/pieces", payload)
+            .post("/prodnames", payload)
             .then(() => {
                 setIsOpen(!isOpen);
                 window.location.reload();
@@ -123,20 +122,20 @@ export default function Pieces() {
     };
 
     //// DELETE USER
-    const [DeletePiece, setDeletePiece] = useState({
+    const [DeleteProd, setDeleteProd] = useState({
         id: null,
         name: "",
-        product_id: "",
+        modal_id: "",
     });
     const [isOpenD, setIsOpenD] = useState(false);
 
     const openDeletePiece = (d) => {
         setIsOpenD(!isOpenD);
-        setDeletePiece(d);
+        setDeleteProd(d);
     };
 
     const handleDelete = () => {
-        axiosClient.delete(`/pieces/${DeletePiece.id}`).then(() => {
+        axiosClient.delete(`/prodnames/${DeleteProd.id}`).then(() => {
             setIsOpenD(!isOpenD);
             window.location.reload();
         });
@@ -144,16 +143,16 @@ export default function Pieces() {
 
     //UPDATE USER
 
-    const [pieceUpdate, setPieceUpdate] = useState({
+    const [prodUpdate, setProdUpdate] = useState({
         id: null,
         name: "",
-        product_id: "",
+        modal_id: "",
     });
 
     const onUpdate = (ev) => {
         ev.preventDefault();
         axiosClient
-            .put(`/pieces/${pieceUpdate.id}`, pieceUpdate)
+            .put(`/prodnames/${prodUpdate.id}`, prodUpdate)
             .then(() => {
                 setIsOpenU(!isOpenU);
                 window.location.reload();
@@ -174,7 +173,7 @@ export default function Pieces() {
                             <h5>
                                 <span class="text-gray-500">All Pieces:</span>
                                 <span class="dark:text-white">
-                                    {pieces.length}
+                                    {prods.length}
                                 </span>
                             </h5>
                         </div>
@@ -197,7 +196,7 @@ export default function Pieces() {
                                         d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                                     />
                                 </svg>
-                                Add Pieces
+                                Add Products
                             </button>
                             {/* Main Piece */}
                             {isOpen && (
@@ -213,7 +212,7 @@ export default function Pieces() {
                                             {/* Piece header */}
                                             <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                                    Add Pieces
+                                                    Add Products
                                                 </h3>
                                                 <button
                                                     type="button"
@@ -275,17 +274,17 @@ export default function Pieces() {
                                                         htmlFor="product"
                                                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                                     >
-                                                        Product
+                                                        Modal
                                                     </label>
                                                     <select
-                                                        ref={productidRef}
+                                                        ref={modalidRef}
                                                         id="product"
                                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                     >
                                                         <option selected="">
-                                                            Select Product
+                                                            Select Modal
                                                         </option>
-                                                        {products.map((r) => (
+                                                        {modals.map((r) => (
                                                             <option
                                                                 key={r.id}
                                                                 value={r.id}
@@ -314,7 +313,7 @@ export default function Pieces() {
                                                                 clipRule="evenodd"
                                                             ></path>
                                                         </svg>
-                                                        Add new Pieces
+                                                        Add new Products
                                                     </button>
                                                 </div>
                                             </form>
@@ -384,11 +383,11 @@ export default function Pieces() {
                                                             name="name"
                                                             id="name"
                                                             value={
-                                                                pieceUpdate.name
+                                                                prodUpdate.name
                                                             }
                                                             onChange={(ev) =>
-                                                                setPieceUpdate({
-                                                                    ...pieceUpdate,
+                                                                setProdUpdate({
+                                                                    ...prodUpdate,
                                                                     name: ev
                                                                         .target
                                                                         .value,
@@ -399,17 +398,17 @@ export default function Pieces() {
                                                     </div>
                                                     <div>
                                                         <label
-                                                            htmlFor="product"
+                                                            htmlFor="modal"
                                                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                                         >
-                                                            Product
+                                                            Modal
                                                         </label>
                                                         <select
-                                                            id="product"
+                                                            id="modal"
                                                             onChange={(ev) =>
-                                                                setPieceUpdate({
-                                                                    ...pieceUpdate,
-                                                                    product_id:
+                                                                setProdUpdate({
+                                                                    ...prodUpdate,
+                                                                    modal_id:
                                                                         ev
                                                                             .target
                                                                             .value,
@@ -419,22 +418,16 @@ export default function Pieces() {
                                                         >
                                                             <option /* selected="" */
                                                             >
-                                                                Select product
+                                                                Select modal
                                                             </option>
-                                                            {products.map(
-                                                                (m) => (
-                                                                    <option
-                                                                        key={
-                                                                            m.id
-                                                                        }
-                                                                        value={
-                                                                            m.id
-                                                                        }
-                                                                    >
-                                                                        {m.name}
-                                                                    </option>
-                                                                )
-                                                            )}
+                                                            {modals.map((m) => (
+                                                                <option
+                                                                    key={m.id}
+                                                                    value={m.id}
+                                                                >
+                                                                    {m.name}
+                                                                </option>
+                                                            ))}
                                                         </select>
                                                     </div>
                                                 </div>
@@ -456,14 +449,14 @@ export default function Pieces() {
                                                                 clipRule="evenodd"
                                                             ></path>
                                                         </svg>
-                                                        Update Piece
+                                                        Update Product
                                                     </button>
                                                     <button
                                                         type="button"
                                                         className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-red-600 border border-red-600 rounded-lg hover:text-white hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
                                                         onClick={(ev) =>
                                                             openDeletePiece(
-                                                                pieceUpdate
+                                                                prodUpdate
                                                             )
                                                         }
                                                     >
@@ -576,7 +569,7 @@ export default function Pieces() {
                                         type="text"
                                         id="floating-phone-number"
                                         class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                        placeholder="  Piece name"
+                                        placeholder="  Product name"
                                         onChange={(e) =>
                                             setSearch_name(e.target.value)
                                         }
@@ -606,9 +599,9 @@ export default function Pieces() {
                                         type="text"
                                         id="floating-phone-number"
                                         class="block py-2.5 ps-6 pe-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                        placeholder="  product name"
+                                        placeholder="  modal name"
                                         onChange={(e) =>
-                                            setSearch_product(e.target.value)
+                                            setSearch_modal(e.target.value)
                                         }
                                     />
                                 </div>
@@ -650,13 +643,10 @@ export default function Pieces() {
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="px-4 py-3">
-                                        Piece name
-                                    </th>
-                                    <th scope="col" className="px-4 py-3">
                                         Product name
                                     </th>
                                     <th scope="col" className="px-4 py-3">
-                                        Quantity
+                                        Modal name
                                     </th>
                                     <th scope="col" className="px-4 py-3">
                                         created_at
@@ -700,7 +690,7 @@ export default function Pieces() {
                             )}
                             {!loading && (
                                 <tbody>
-                                    {pieces
+                                    {prods
                                         .filter((d) => {
                                             return search_name.toLowerCase() ===
                                                 ""
@@ -710,12 +700,12 @@ export default function Pieces() {
                                                       .includes(search_name);
                                         })
                                         .filter((d) => {
-                                            return search_product.toLowerCase() ===
+                                            return search_modal.toLowerCase() ===
                                                 ""
                                                 ? d
-                                                : d.product
+                                                : d.modal
                                                       .toLowerCase()
-                                                      .includes(search_product);
+                                                      .includes(search_modal);
                                         })
                                         .filter((d) => {
                                             if (
@@ -745,13 +735,7 @@ export default function Pieces() {
                                                     scope="row"
                                                     className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                                 >
-                                                    {d.product}
-                                                </th>
-                                                <th
-                                                    scope="row"
-                                                    className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                                >
-                                                    {d.quantity}
+                                                    {d.modal}
                                                 </th>
                                                 <td className="px-4 py-3">
                                                     {d.created_at}

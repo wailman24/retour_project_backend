@@ -11,8 +11,8 @@ class Modal extends Model
 
     protected $fillable = ['name'];
 
-    public function products()
+    public function prodnames()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Prodname::class);
     }
 }
