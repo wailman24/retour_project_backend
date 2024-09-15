@@ -19,6 +19,7 @@ import Stocks from "./views/Stocks.jsx";
 import Bons from "./views/Bons.jsx";
 import Crtretours from "./views/Crtretours.jsx";
 import ProductsName from "./views/ProductsName.jsx";
+import Retours from "./views/Retours.jsx";
 //import UserForm from "./views/UserForm";
 
 const router = createBrowserRouter([
@@ -124,6 +125,22 @@ const router = createBrowserRouter([
                 element: (
                     //<PrivateRoute requiredRole={1}>
                     <Bons />
+                    //</PrivateRoute>
+                ),
+            },
+            {
+                path: "/retours/:bonId",
+                element: (
+                    //<PrivateRoute requiredRole={1}>
+                    <Retours />
+                    //</PrivateRoute>
+                ),
+            },
+            {
+                path: "/retours",
+                element: (
+                    //<PrivateRoute requiredRole={1}>
+                    <Retours />
                     //</PrivateRoute>
                 ),
             },

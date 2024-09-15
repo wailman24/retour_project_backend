@@ -202,6 +202,13 @@ class RetourController extends Controller
         return new RetoursResource($retour);
     }
 
+    public function retourbybonid($id)
+    {
+        $retours_ids = DB::table('bon_retour')->where('bon_id', $id)->pluck('retour_id');
+        $retours = DB::table('retours')->whereIn('id', $retours_ids)->get();
+        return RetoursResource::collection($retours);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
