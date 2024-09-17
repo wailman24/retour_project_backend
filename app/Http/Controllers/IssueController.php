@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\IssuesResource;
 use App\Models\Issue;
 use App\Models\Piece;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class IssueController extends Controller
@@ -50,6 +51,7 @@ class IssueController extends Controller
     {
         return new IssuesResource($issue);
     }
+
 
     /**
      * Show the form for editing the specified resource.

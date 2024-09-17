@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PiecesResource;
 use App\Models\Piece;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PieceController extends Controller
 {
@@ -57,6 +58,26 @@ class PieceController extends Controller
         $pcs = Piece::where('product_id', $id)->get();
 
         return PiecesResource::collection($pcs);
+    }
+
+    public function pieceofretour($id)
+    {
+
+        /*  $pcs = DB::table('pieces')
+            ->join('piece_issue_reteur', 'pieces.id', '=', 'piece_issue_reteur.piece_id')
+            ->where('piece_issue_reteur.retour_id', '=', $id)
+            //->select('pieces.name')
+            ->get(); */
+
+        $pcs = DB::table('pieces')
+            ->join('piece_issue_reteur', 'pieces.id', '=', 'piece_issue_reteur.piece_id')
+            ->join('issues', 'issues.id', '=', 'piece_issue_reteur.issue_id')
+            ->where('piece_issue_reteur.retour_id', '=', $id)
+            ->select('pieces.name', 'issues.description')
+            ->get();
+
+        return response()->json($pcs);
+        //return PiecesResource::collection($pcs);
     }
 
     /**

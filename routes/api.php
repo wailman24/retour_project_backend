@@ -52,6 +52,7 @@ Route::middleware(['auth:api', 'checkUserId'])->group(function () {
     Route::apiResources(['distributeurs' => DistributeurController::class]);
     Route::apiResources(['pieces' => PieceController::class]);
     Route::get('pieceofproduct/{id}', [PieceController::class, 'pieceofproduct']);
+    Route::get('pieceofretour/{id}', [PieceController::class, 'pieceofretour']);
     Route::apiResources(['stocks' => StockController::class]);
     Route::apiResources(['bons' => BonController::class]);
     Route::apiResources(['retours' => RetourController::class]);

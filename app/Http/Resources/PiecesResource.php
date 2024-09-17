@@ -27,7 +27,7 @@ class PiecesResource extends JsonResource
             'name' => $this->name,
             'product' => $prod->name,
             'quantity' => $quantity,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            //'date' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }
 }

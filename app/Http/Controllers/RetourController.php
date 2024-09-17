@@ -162,9 +162,10 @@ class RetourController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Retour $retour)
+    public function show($id)
     {
-        //
+        $retour = Retour::findOrFail($id);  // Fetch the retour by ID
+        return new RetoursResource($retour);
     }
 
     /**
@@ -178,27 +179,33 @@ class RetourController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Retour $retour)
+    public function update(Request $request, $id)
     {
+        // Validate the incoming request
         $request->validate([
-            'guarante' => 'required',
-            'status' => 'required',
-            'issue_ids' => 'required|array',
-            'issue_ids.*' => 'exists:issues,id',  // Validate each issue_id
-            'product_id' => 'required'
+
+            'pieces' => 'required|array',
+            'pieces.*.id' => 'required|exists:pieces,id',
+            'pieces.*.issues' => 'required|array',
+            'pieces.*.issues.*' => 'required|exists:issues,id',
+
         ]);
 
-        $retour->update([
-            'guarante' => $request->guarante,
-            'status' => $request->status,
-            'product_id' => $request->product_id
-        ]);
-        // Sync multiple Issues to the Retour
-        $retour->issues()->sync($request->issue_ids);
+        // Find the Retour record by ID
+        $retour = Retour::findOrFail($id);
 
-        // Load related issues for proper inclusion in the resource
-        $retour->load('issues');
+        // Detach all existing pieces and issues
+        $retour->pieces()->detach();
 
+        // Re-attach pieces with issues to the retour
+        foreach ($request->pieces as $pieceData) {
+            $pieceId = $pieceData['id'];
+            $issueIds = $pieceData['issues'];
+
+            foreach ($issueIds as $issueId) {
+                $retour->pieces()->attach($pieceId, ['issue_id' => $issueId]);
+            }
+        }
         return new RetoursResource($retour);
     }
 
