@@ -208,6 +208,18 @@ class RetourController extends Controller
         }
         return new RetoursResource($retour);
     }
+    public function changestatus($id, Request $request)
+    {
+        $request->validate([
+            'status' => 'required',
+        ]);
+
+        $retour = Retour::findOrFail($id);
+        $retour->update([
+            'status' => $request->status,
+        ]);
+        return new RetoursResource($retour);
+    }
 
     public function retourbybonid($id)
     {

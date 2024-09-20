@@ -46,19 +46,29 @@ Route::middleware(['auth:api', 'checkUserId'])->group(function () {
     Route::apiResources(['roles' => RoleController::class]);
     Route::apiResources(['users' => UserController::class]);
     Route::apiResources(['modals' => ModalController::class]);
-    Route::apiResources(['prodnames' => ProdnameController::class]);
-    Route::apiResources(['products' => ProductController::class]);
+
+
     Route::put('updateDist/{id}', [ProductController::class, 'updateDist']);
-    Route::apiResources(['distributeurs' => DistributeurController::class]);
-    Route::apiResources(['pieces' => PieceController::class]);
-    Route::get('pieceofproduct/{id}', [PieceController::class, 'pieceofproduct']);
-    Route::get('pieceofretour/{id}', [PieceController::class, 'pieceofretour']);
+
+
+
+
     Route::apiResources(['stocks' => StockController::class]);
-    Route::apiResources(['bons' => BonController::class]);
-    Route::apiResources(['retours' => RetourController::class]);
-    Route::get('retourbybonid/{id}', [RetourController::class, 'retourbybonid']);
+
+
     Route::post('decrement', [StockController::class, 'decrement']);
-    Route::apiResources(['issues' => IssueController::class]);
+
     Route::get('clients', [UserController::class, 'Clients']);
     Route::post('searchbyimei', [ProductController::class, 'searchByImei']);
 });
+Route::apiResources(['distributeurs' => DistributeurController::class]);
+Route::apiResources(['bons' => BonController::class]);
+Route::apiResources(['retours' => RetourController::class]);
+Route::put('changestatus/{id}', [RetourController::class, 'changestatus']);
+Route::get('pieceofproduct/{id}', [PieceController::class, 'pieceofproduct']);
+Route::get('pieceofretour/{id}', [PieceController::class, 'pieceofretour']);
+Route::get('retourbybonid/{id}', [RetourController::class, 'retourbybonid']);
+Route::apiResources(['products' => ProductController::class]);
+Route::apiResources(['prodnames' => ProdnameController::class]);
+Route::apiResources(['issues' => IssueController::class]);
+Route::apiResources(['pieces' => PieceController::class]);

@@ -18,7 +18,7 @@ export default function Bons() {
 
     const navigate = useNavigate();
     //modal
-    const { setUser } = useStateContext();
+    const { user, setUser } = useStateContext();
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenU, setIsOpenU] = useState(false);
 
@@ -188,13 +188,15 @@ export default function Bons() {
                                 </select>
                             </div>
                         </div>
-                        <button
-                            onClick={toggleModal}
-                            type="button"
-                            className="w-full rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:w-auto"
-                        >
-                            Add return request
-                        </button>
+                        {user.role_id == 1 && (
+                            <button
+                                onClick={toggleModal}
+                                type="button"
+                                className="w-full rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:w-auto"
+                            >
+                                Add return request
+                            </button>
+                        )}
                     </div>
 
                     {isOpen && (
@@ -365,15 +367,18 @@ export default function Bons() {
                                     </dl>
 
                                     <div className="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
-                                        <button
-                                            onClick={() =>
-                                                handleViewDetails(b.id)
-                                            }
-                                            type="button"
-                                            className="w-full rounded-lg bg-primary-700 text-white hover:bg-primary-800 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-3 py-2 text-sm font-medium"
-                                        >
-                                            {"Add retours"}
-                                        </button>
+                                        {user.role_id == 1 && (
+                                            <button
+                                                onClick={() =>
+                                                    handleViewDetails(b.id)
+                                                }
+                                                type="button"
+                                                className="w-full rounded-lg bg-primary-700 text-white hover:bg-primary-800 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 px-3 py-2 text-sm font-medium"
+                                            >
+                                                {"Add retours"}
+                                            </button>
+                                        )}
+
                                         <a
                                             onClick={() =>
                                                 handleViewRetours(b.id)

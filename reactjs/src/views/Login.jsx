@@ -19,6 +19,7 @@ export default function Login() {
             .then(({ data }) => {
                 setUser(data.user);
                 setToken(data.token);
+                console.log(data.user);
             })
             .catch((err) => {
                 const response = err.response;
@@ -28,30 +29,52 @@ export default function Login() {
             });
     };
     return (
-        <div className="login-signup-form animated fadeInDown">
-            <div className="form">
-                <form onSubmit={onSubmit}>
-                    <h1 className="title"> Login into your account </h1>
-                    {errors && (
-                        <div className="alert">
-                            {Object.keys(errors).map((key) => (
-                                <p key={key}>{errors[key][0]}</p>
-                            ))}
-                        </div>
-                    )}
-                    <input ref={emailRef} type="email" placeholder="Email" />
-                    <input
-                        ref={passwordRef}
-                        type="password"
-                        placeholder="password"
-                    />
-                    <button className="btn btn-block">Login</button>
-                    <p className="message">
-                        Not Registered?
-                        <Link to="/signup"> create an account</Link>
-                    </p>
-                </form>
+        <form className="max-w-sm mx-auto" onSubmit={onSubmit}>
+            {errors && (
+                <div className="alert">
+                    {Object.keys(errors).map((key) => (
+                        <p key={key}>{errors[key][0]}</p>
+                    ))}
+                </div>
+            )}
+            <div className="mb-5">
+                <label
+                    htmlFor="email"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                    Your email
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    ref={emailRef}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    //placeholder="name@flowbite.com"
+                    required
+                />
             </div>
-        </div>
+            <div className="mb-5">
+                <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                    Your password
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    ref={passwordRef}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required
+                />
+            </div>
+
+            <button
+                type="submit"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+                Submit
+            </button>
+        </form>
     );
 }

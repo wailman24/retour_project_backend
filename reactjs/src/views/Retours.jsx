@@ -19,7 +19,7 @@ export default function Retours() {
 
     const navigate = useNavigate();
     //modal
-    const { setUser } = useStateContext();
+    const { user, setUser } = useStateContext();
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenU, setIsOpenU] = useState(false);
 
@@ -93,6 +93,23 @@ export default function Retours() {
     };
 
     const handleViewDetails = (id) => {
+        if (user.role_id == 3) {
+            const infoUpdate = {
+                status: "B",
+            };
+            axiosClient
+                .put(`/changestatus/${id}`, infoUpdate)
+                .then(({ data }) => {
+                    //setLoading(false);
+                    console.log(data.data);
+                })
+                .catch((err) => {
+                    const response = err.response;
+                    if (response && response.status === 422) {
+                        setErrors(response.data.errors);
+                    }
+                });
+        }
         navigate(`/details/${id}`);
     };
 
@@ -215,7 +232,13 @@ export default function Retours() {
 
                                         {/* Second Status */}
                                         <div className="flex flex-col items-center">
-                                            <div className="h-4 w-4 rounded-full bg-gray-500 dark:bg-gray-400"></div>
+                                            <div
+                                                className={`h-4 w-4 rounded-full ${
+                                                    b.status === "B"
+                                                        ? " bg-primary-700"
+                                                        : " bg-gray-500"
+                                                } dark:bg-primary-500`}
+                                            ></div>
                                             <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2">
                                                 In Progress
                                             </p>
@@ -226,7 +249,13 @@ export default function Retours() {
 
                                         {/* Third Status */}
                                         <div className="flex flex-col items-center">
-                                            <div className="h-4 w-4 rounded-full bg-gray-500 dark:bg-gray-400"></div>
+                                            <div
+                                                className={`h-4 w-4 rounded-full ${
+                                                    b.status === "C"
+                                                        ? " bg-primary-700"
+                                                        : " bg-gray-500"
+                                                } dark:bg-primary-500`}
+                                            ></div>
                                             <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2">
                                                 Completed
                                             </p>
