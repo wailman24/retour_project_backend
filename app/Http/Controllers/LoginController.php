@@ -57,6 +57,9 @@ class LoginController extends Controller
                 'user' => $user,
                 'token' => $token
             ]);
+            /*  $cookie = cookie('token', $token, 60 * 24 * 365); // 1 week expiration
+
+            return response()->json(['user' => $user, 'token' => $token])->withCookie($cookie); */
         } else {
             return response()->json([
                 'status' => false,
@@ -121,16 +124,12 @@ class LoginController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-    {
-    }
+    public function update(Request $request, $id) {}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id, Request $request)
-    {
-    }
+    public function destroy(string $id, Request $request) {}
 
     public function logout(Request $request)
     {

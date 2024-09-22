@@ -298,29 +298,31 @@ export default function Retourdetails() {
                                         </li>
                                     ))}
                                 </ul>
-                                <button
-                                    onClick={() => {
-                                        toggleUpdateModal();
-                                        getPiecesofProduct();
-                                        getIssues();
-                                    }}
-                                    type="submit"
-                                    className="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none dark:focus:ring-blue-800"
-                                >
-                                    <svg
-                                        className="mr-1 -ml-1 w-6 h-6"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg"
+                                {user.role_id != 2 && (
+                                    <button
+                                        onClick={() => {
+                                            toggleUpdateModal();
+                                            getPiecesofProduct();
+                                            getIssues();
+                                        }}
+                                        type="submit"
+                                        className="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none dark:focus:ring-blue-800"
                                     >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                                            clipRule="evenodd"
-                                        ></path>
-                                    </svg>
-                                    Update Piece
-                                </button>
+                                        <svg
+                                            className="mr-1 -ml-1 w-6 h-6"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                                clipRule="evenodd"
+                                            ></path>
+                                        </svg>
+                                        Update Piece
+                                    </button>
+                                )}
                             </div>
 
                             {isOpenU && (
