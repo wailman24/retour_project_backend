@@ -33,10 +33,31 @@ class BonsResource extends JsonResource
                 $userName = $user->name;
             }
         }
+        $retours = DB::table('bon_retour')
+            ->join('retours', 'bon_retour.retour_id', '=', 'retours.id')
+            ->where('bon_retour.bon_id', $this->id)
+            ->pluck('retours.status');  // Get all the statuses of the retours for the given bon
+        if ($retours->isEmpty()) {
+            // Handle the case where no retours exist
+            $status = 'No Retour'; // You can set this to any status you'd like (e.g., 'Pending', 'N/A')
+        } else {
+            $status = 'Completed'; // Start assuming all are 'C'
+
+            foreach ($retours as $retour) {
+                if ($retour === 'B') {
+                    $status = 'In Progress';  // If one is 'B', set the status to 'B'
+                    break;  // No need to check further
+                } elseif ($retour === 'A') {
+                    $status = 'Initiated';  // If one is 'A', set the status to 'A', but keep checking for 'B'
+                }
+            }
+        }
+
         return [
             'id' => $this->id,
             'dist_id' => $this->dist_id,
             'distributeur' => $userName,
+            'status' => $status,
             'date' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }

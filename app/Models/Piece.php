@@ -19,6 +19,11 @@ class Piece extends Model
     {
         return $this->hasMany(Stock::class);
     }
+
+    public function magazines()
+    {
+        return $this->hasMany(Magazine::class);
+    }
     /* public function issues()
     {
         return $this->belongsTo(Issue::class);

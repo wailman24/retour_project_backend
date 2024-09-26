@@ -135,35 +135,10 @@ export default function Bons() {
                 <div className="mx-auto max-w-5xl">
                     <div className="gap-4 sm:flex sm:items-center sm:justify-between">
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
-                            My orders
+                            Les Bons
                         </h2>
 
-                        <div className="mt-6 gap-4 space-y-4 sm:mt-0 sm:flex sm:items-center sm:justify-end sm:space-y-0">
-                            <div>
-                                <label
-                                    htmlFor="order-type"
-                                    className="sr-only mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Select order type
-                                </label>
-                                <select
-                                    id="order-type"
-                                    className="block w-full min-w-[8rem] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                                >
-                                    <option selected>All orders</option>
-                                    <option value="pre-order">Pre-order</option>
-                                    <option value="transit">In transit</option>
-                                    <option value="confirmed">Confirmed</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
-
-                            <span className="inline-block text-gray-500 dark:text-gray-400">
-                                {" "}
-                                from{" "}
-                            </span>
-
-                            <div>
+                        {/*  <div>
                                 <label
                                     htmlFor="duration"
                                     className="sr-only mb-2 block text-sm font-medium text-gray-900 dark:text-white"
@@ -187,14 +162,14 @@ export default function Bons() {
                                     <option value="this year">this year</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> */}
                         {user.role_id == 1 && (
                             <button
                                 onClick={toggleModal}
                                 type="button"
                                 className="w-full rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 sm:w-auto"
                             >
-                                Add return request
+                                Ajouter un Bon
                             </button>
                         )}
                     </div>
@@ -362,7 +337,7 @@ export default function Bons() {
                                                     strokeWidth="2"
                                                 />
                                             </svg>
-                                            status
+                                            {b.status}
                                         </dd>
                                     </dl>
 

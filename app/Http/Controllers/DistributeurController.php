@@ -31,8 +31,8 @@ class DistributeurController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'location' => 'required',
-            'user_id' => 'required'
+            'location' => 'required|unique:distributeurs',
+            'user_id' => 'required|unique:distributeurs'
         ]);
 
         $distributeur = Distributeur::create([

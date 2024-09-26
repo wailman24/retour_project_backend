@@ -86,7 +86,7 @@ export default function Pieces() {
     const getProducts = () => {
         setLoading(true);
         axiosClient
-            .get("/products")
+            .get("/prodnames")
             .then(({ data }) => {
                 setLoading(false);
                 setProducts(data.data);
@@ -110,6 +110,7 @@ export default function Pieces() {
             .then(({ data }) => {
                 setLoading(false);
                 setStocks(data.data);
+                console.log(data.data);
             })
             .catch((err) => {
                 const response = err.response;

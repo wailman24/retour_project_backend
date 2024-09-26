@@ -235,28 +235,28 @@ export default function Retourdetails() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 <div>
                                     <h3 className="font-medium text-gray-500">
-                                        Retour ID
+                                        Nom de retour
                                     </h3>
                                     <p className="text-lg text-gray-900">
-                                        {retour.id}
+                                        {retour.name}
                                     </p>
                                 </div>
 
                                 <div>
                                     <h3 className="font-medium text-gray-500">
-                                        Date
+                                        Nom du produit
                                     </h3>
                                     <p className="text-lg text-gray-900">
-                                        {retour.date}
+                                        {retour.prodname}
                                     </p>
                                 </div>
 
                                 <div>
                                     <h3 className="font-medium text-gray-500">
-                                        Status
+                                        Imei du produit
                                     </h3>
                                     <p className="text-lg text-gray-900">
-                                        {retour.status}
+                                        {retour.Imei}
                                     </p>
                                 </div>
                             </div>
@@ -264,7 +264,7 @@ export default function Retourdetails() {
                             {/* Pieces Section */}
                             <div className="mb-8">
                                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                                    Pieces
+                                    Les Problèmes
                                 </h3>
                                 <ul className="list-disc list-inside text-gray-900">
                                     {retourpiece.map((piece) => (
@@ -548,91 +548,57 @@ export default function Retourdetails() {
                                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                                         Status Timeline
                                     </h3>
-                                    <ol className="relative border-l border-gray-200 dark:border-gray-700">
-                                        {/* First event */}
-                                        <li className="mb-10 ml-6">
-                                            <span className="absolute -left-3 flex items-center justify-center w-6 h-6 bg-primary-100 rounded-full ring-8 ring-white dark:ring-gray-900 dark:bg-primary-900">
-                                                <svg
-                                                    className="w-3 h-3 text-primary-600 dark:text-primary-400"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414 0L9 9.586 7.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                                                <h3 className="font-semibold text-gray-900">
-                                                    Product Added
-                                                </h3>
-                                                <time className="block mb-2 text-sm font-normal text-gray-400">
-                                                    {retour.date}
-                                                </time>
-                                                <p className="text-base font-normal text-gray-500">
-                                                    Products have been added to
-                                                    the retour.
-                                                </p>
-                                            </div>
-                                        </li>
 
-                                        {/* Second event */}
-                                        <li className="mb-10 ml-6">
-                                            <span className="absolute -left-3 flex items-center justify-center w-6 h-6 bg-gray-300 rounded-full ring-8 ring-white dark:ring-gray-900">
-                                                <svg
-                                                    className="w-3 h-3 text-gray-600 dark:text-gray-400"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414 0L9 9.586 7.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                                                <h3 className="font-semibold text-gray-900">
-                                                    Date Selected
-                                                </h3>
-                                                <time className="block mb-2 text-sm font-normal text-gray-400">
-                                                    {retour.date}
-                                                </time>
-                                                <p className="text-base font-normal text-gray-500">
-                                                    Retour date has been
-                                                    selected.
-                                                </p>
-                                            </div>
-                                        </li>
+                                    {/* Final event */}
+                                    <div className="w-full sm:w-3/4 lg:w-auto flex items-center space-x-6">
+                                        {/* First Status */}
+                                        <div className="flex flex-col items-center">
+                                            <div
+                                                className={`h-4 w-4 rounded-full ${
+                                                    retour.status === "A"
+                                                        ? "bg-sky-500"
+                                                        : " bg-gray-600"
+                                                } dark:bg-primary-500`}
+                                            ></div>
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2">
+                                                Initiated
+                                            </p>
+                                        </div>
 
-                                        {/* Final event */}
-                                        <li className="ml-6">
-                                            <span className="absolute -left-3 flex items-center justify-center w-6 h-6 bg-gray-300 rounded-full ring-8 ring-white dark:ring-gray-900">
-                                                <svg
-                                                    className="w-3 h-3 text-gray-600 dark:text-gray-400"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414 0L9 9.586 7.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </span>
-                                            <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-                                                <h3 className="font-semibold text-gray-900">
-                                                    Confirmation
-                                                </h3>
-                                                <p className="text-base font-normal text-gray-500">
-                                                    Retour confirmed
-                                                    successfully.
-                                                </p>
-                                            </div>
-                                        </li>
-                                    </ol>
+                                        {/* Connector Line */}
+                                        <div className="h-px w-16 bg-gray-200 dark:bg-gray-700"></div>
+
+                                        {/* Second Status */}
+                                        <div className="flex flex-col items-center">
+                                            <div
+                                                className={`h-4 w-4 rounded-full ${
+                                                    retour.status === "B"
+                                                        ? "bg-sky-500"
+                                                        : " bg-gray-600"
+                                                } dark:bg-primary-500`}
+                                            ></div>
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2">
+                                                In Progress
+                                            </p>
+                                        </div>
+
+                                        {/* Connector Line */}
+                                        <div className="h-px w-16 bg-gray-200 dark:bg-gray-700"></div>
+
+                                        {/* Third Status */}
+                                        <div className="flex flex-col items-center">
+                                            <div
+                                                className={`h-4 w-4 rounded-full ${
+                                                    retour.status === "C"
+                                                        ? "bg-sky-500"
+                                                        : "bg-gray-600"
+                                                } dark:bg-primary-500`}
+                                            ></div>
+                                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-2">
+                                                Completed
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 
@@ -643,7 +609,7 @@ export default function Retourdetails() {
                                     href=""
                                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >
-                                    fin de Retours
+                                    fin de détails
                                 </button>
                             </div>
                         </div>

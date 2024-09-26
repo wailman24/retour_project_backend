@@ -58,18 +58,15 @@ class StockController extends Controller
     public function decrement(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'product_id' => 'required',
+            'piece_id' => 'required',
             'quantity' => 'required|integer|min:1',
         ]);
 
         $quantity = $request->quantity;
-        $name = $request->name;
-        $product_id = $request->product_id;
+        $piece_id = $request->quantity;
 
-        $piece_id = Piece::where('name', $name)
-            ->where('product_id', $product_id)
-            ->value('id');
+
+
         // Get the pieces for the product
         $pieces = Stock::where('piece_id', $piece_id)->limit($quantity)->get();
 
@@ -100,9 +97,7 @@ class StockController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Stock $stock)
-    {
-    }
+    public function show(Stock $stock) {}
 
     /**
      * Show the form for editing the specified resource.

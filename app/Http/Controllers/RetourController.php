@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RetoursResource;
 use App\Models\Issue;
+use App\Models\Prodname;
 use Illuminate\Support\Facades\DB;
 use App\Models\Retour;
 use Illuminate\Http\Request;
@@ -226,6 +227,43 @@ class RetourController extends Controller
         $retours_ids = DB::table('bon_retour')->where('bon_id', $id)->pluck('retour_id');
         $retours = DB::table('retours')->whereIn('id', $retours_ids)->get();
         return RetoursResource::collection($retours);
+    }
+
+    public function completedretours()
+    {
+        $retours = DB::table('retours')
+            ->where('status', 'C')
+            ->count();
+        return $retours;
+    }
+    public function initialretours()
+    {
+        $retours = DB::table('retours')
+            ->where('status', 'A')
+            ->count();
+
+        return $retours;
+    }
+
+    public function inprogresretours()
+    {
+        $retours = DB::table('retours')
+            ->where('status', 'B')
+            ->count();
+
+        return $retours;
+    }
+
+    public function retoursbyproduct()
+    {
+        $retoursByProduct = DB::table('retours')
+            ->join('products', 'retours.product_id', '=', 'products.id')
+            ->join('prodnames', 'products.name_id', '=', 'prodnames.id')
+            ->select('prodnames.name as prodname', DB::raw('count(retours.id) as total_retours'))
+            ->groupBy('prodname')
+            ->get();
+
+        return response()->json($retoursByProduct);
     }
 
     /**

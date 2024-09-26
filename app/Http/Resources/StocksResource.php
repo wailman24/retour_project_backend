@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Piece;
+use App\Models\Prodname;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,7 +19,7 @@ class StocksResource extends JsonResource
     {
         $piece = Piece::find($this->piece_id);
         $prod_id = $piece->product_id;
-        $prod = Product::find($prod_id);
+        $prod = Prodname::find($prod_id);
         return [
             'id' => (string)$this->id,
             'name' => $piece->name,

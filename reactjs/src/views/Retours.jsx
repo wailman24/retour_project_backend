@@ -216,10 +216,18 @@ export default function Retours() {
 
                                         <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
                                             <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
-                                                Date:
+                                                created at:
                                             </dt>
                                             <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
                                                 {b.date}
+                                            </dd>
+                                        </dl>
+                                        <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
+                                            <dt className="text-base font-medium text-gray-500 dark:text-gray-400">
+                                                updated at:
+                                            </dt>
+                                            <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                                                {b.update}
                                             </dd>
                                         </dl>
 

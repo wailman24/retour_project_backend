@@ -11,6 +11,7 @@ use App\Http\Controllers\ModalController;
 use App\Http\Controllers\PieceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\IssueController;
+use App\Http\Controllers\MagazineController;
 use App\Http\Controllers\ProdnameController;
 use App\Http\Controllers\RetourController;
 use App\Http\Controllers\SearchRetourController;
@@ -49,9 +50,10 @@ Route::middleware(['auth:api', 'checkUserId'])->group(function () {
 
 
     Route::put('updateDist/{id}', [ProductController::class, 'updateDist']);
-
-
-
+    Route::get('completedretours', [RetourController::class, 'completedretours']);
+    Route::get('initialretours', [RetourController::class, 'initialretours']);
+    Route::get('inprogresretours', [RetourController::class, 'inprogresretours']);
+    Route::get('retoursbyproduct', [RetourController::class, 'retoursbyproduct']);
 
     Route::apiResources(['stocks' => StockController::class]);
 
@@ -61,6 +63,7 @@ Route::middleware(['auth:api', 'checkUserId'])->group(function () {
     Route::get('clients', [UserController::class, 'Clients']);
     Route::post('searchbyimei', [ProductController::class, 'searchByImei']);
 });
+Route::apiResources(['magazines' => MagazineController::class]);
 Route::apiResources(['distributeurs' => DistributeurController::class]);
 Route::apiResources(['bons' => BonController::class]);
 Route::apiResources(['retours' => RetourController::class]);

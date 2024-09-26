@@ -38,7 +38,7 @@ export default function MagazPieces() {
     const getProducts = () => {
         setLoading(true);
         axiosClient
-            .get("/products")
+            .get("/prodnames")
             .then(({ data }) => {
                 setProducts(data.data);
                 setLoading(false);
@@ -55,13 +55,28 @@ export default function MagazPieces() {
     const onSubmit = (ev) => {
         ev.preventDefault();
         const payload = {
-            name: pcnameRef.current.value,
-            product_id: productRef.current.value,
+            piece_id: pcnameRef.current.value,
             quantity: qteRef.current.value,
         };
+
         console.log(payload);
         axiosClient
             .post("/decrement", payload)
+            .then(() => {
+                //window.location.reload();
+            })
+            .catch((err) => {
+                const response = err.response;
+
+                if (response && response.status === 422) {
+                    console.error(response.data.errors);
+                    setErrors(response.data.errors);
+                }
+            });
+
+        console.log(payload);
+        axiosClient
+            .post("/magazines", payload)
             .then(() => {
                 window.location.reload();
             })
@@ -118,7 +133,7 @@ export default function MagazPieces() {
                             >
                                 <option selected="">Select name</option>
                                 {pieces.map((r) => (
-                                    <option key={r.id} value={r.name}>
+                                    <option key={r.id} value={r.id}>
                                         {r.name}
                                     </option>
                                 ))}
