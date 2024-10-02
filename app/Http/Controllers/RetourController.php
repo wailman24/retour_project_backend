@@ -266,6 +266,34 @@ class RetourController extends Controller
         return response()->json($retoursByProduct);
     }
 
+    public function retoursbypiece()
+    {
+        $retoursByPiece = DB::table('piece_issue_reteur')
+            ->join('pieces', 'piece_issue_reteur.piece_id', '=', 'pieces.id')
+            ->join('retours', 'piece_issue_reteur.retour_id', '=', 'retours.id')
+            ->select('pieces.name as piecesname', DB::raw('count(retours.id) as total_retours'))
+            ->groupBy('piecesname')
+            ->get();
+
+        return response()->json($retoursByPiece);
+    }
+
+    public function retoursbyissue()
+    {
+        $retoursByIssue = DB::table('piece_issue_reteur')
+            ->join('pieces', 'piece_issue_reteur.piece_id', '=', 'pieces.id')
+            ->join('issues', 'piece_issue_reteur.issue_id', '=', 'issues.id')
+            ->select(
+                'pieces.name as piece_name',
+                'issues.description as issue_description',
+                DB::raw('count(issues.id) as total_issues')
+            )
+            ->groupBy('piece_name', 'issue_description')
+            ->get();
+
+        return response()->json($retoursByIssue);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

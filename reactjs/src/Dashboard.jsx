@@ -82,6 +82,64 @@ function Dashboard() {
             });
     };
 
+    const [pieceData, setPieceData] = useState([]);
+    useEffect(() => {
+        getRbyppiece();
+    }, []);
+    const getRbyppiece = () => {
+        axiosClient
+            .get("/retoursbypiece")
+            .then(({ data }) => {
+                console.log(data.data);
+                const formattedData = data.map((item) => ({
+                    name: item.piecesname, // Customize as needed
+                    retours: item.total_retours,
+                }));
+                setPieceData(formattedData);
+                //setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const [issueData, setIssueData] = useState([]);
+
+    useEffect(() => {
+        getRbyissue();
+    }, []);
+
+    const getRbyissue = () => {
+        axiosClient
+            .get("/retoursbyissue")
+            .then(({ data }) => {
+                console.log(data); // Removed .data if the structure is simpler
+                const formattedData = data.map((item) => ({
+                    piece: item.piece_name, // Column name from your API
+                    issuename: item.issue_description,
+                    issuecount: item.total_issues,
+                }));
+                setIssueData(formattedData);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+    // Custom Tooltip Component
+    const CustomTooltip = ({ active, payload }) => {
+        if (active && payload && payload.length) {
+            const { piece, issuename, issuecount } = payload[0].payload; // Get data from the first payload
+            return (
+                <div className="bg-white border border-gray-300 rounded-lg p-2">
+                    <p className="font-semibold">{`Piece: ${piece}`}</p>
+                    <p className="text-gray-600">{`Issue: ${issuename}`}</p>
+                    <p className="text-gray-600">{`Count: ${issuecount}`}</p>
+                </div>
+            );
+        }
+        return null;
+    };
+
     const [cretours, setCretours] = useState("");
     useEffect(() => {
         getCRetours();
@@ -186,49 +244,53 @@ function Dashboard() {
                     </ResponsiveContainer>
                 </div>
                 {/* Line Chart */}
-                <div className="p-6 bg-white rounded-lg shadow-lg">
+                {/* <div className="p-6 bg-white rounded-lg shadow-lg">
                     <h2 className="mb-4 text-lg font-semibold">
-                        Users by Month
+                        Retours by Piece
                     </h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={data}>
+                        <LineChart data={pieceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip />
                             <Line
                                 type="monotone"
-                                dataKey="users"
+                                dataKey="retours"
                                 stroke="#82ca9d"
                             />
                         </LineChart>
                     </ResponsiveContainer>
+                </div> */}
+                <div className="p-6 bg-white rounded-lg shadow-lg">
+                    <h2 className="mb-4 text-lg font-semibold">
+                        Retours by Piece
+                    </h2>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={pieceData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="retours" fill="#82ca9d" />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
-                {/* Pie Chart */}
                 <div className="p-6 bg-white rounded-lg shadow-lg">
                     <h2 className="mb-4 text-lg font-semibold">
-                        User Distribution
+                        Pieces by Issue
                     </h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <PieChart>
-                            <Pie
-                                data={pieData}
-                                innerRadius={60}
-                                outerRadius={80}
-                                fill="#8884d8"
-                                paddingAngle={5}
-                            >
-                                {pieData.map((entry, index) => (
-                                    <Cell
-                                        key={`cell-${index}`}
-                                        fill={COLORS[index % COLORS.length]}
-                                    />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                        </PieChart>
+                        <BarChart data={issueData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="piece" />
+                            <YAxis />
+                            <Tooltip content={<CustomTooltip />} />{" "}
+                            {/* Use the custom tooltip */}
+                            <Bar dataKey="issuecount" fill="#82ca9d" />
+                        </BarChart>
                     </ResponsiveContainer>
                 </div>
 

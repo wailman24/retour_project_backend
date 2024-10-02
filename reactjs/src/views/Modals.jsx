@@ -32,54 +32,38 @@ export default function Modals() {
     ///
     const [users, setUsers] = useState([]);
 
-    /*     const itemsPerPage = 10; // Number of items per page
+    const [totalpages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-
-    // Calculate pagination boundaries
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-
-    // Change page
-    const nextPage = () => {
-        if (currentPage < Math.ceil(users.length / itemsPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    }; */
 
     //search
     const [search_name, setSearch_name] = useState("");
-    const [search_email, setSearch_email] = useState("");
-    const [search_location, setSearch_location] = useState("");
     const [search_date, setSearch_date] = useState("");
 
     const [modals, setModals] = useState([]);
     useEffect(() => {
-        getModals();
-    }, []);
+        getModals(currentPage);
+    }, [currentPage]);
 
-    const getModals = () => {
+    const getModals = (page = 1) => {
         setLoading(true);
         axiosClient
-            .get("/modals")
+            .get(`/modals?page=${page}`)
             .then(({ data }) => {
+                console.log("API Response:", data); // For debugging
+                setModals(data.data); // Set the modals for the current page
+                setTotalPages(data.last_page); // Set the total number of pages
+                setCurrentPage(data.current_page); // Set the current page
                 setLoading(false);
-                setModals(data.data);
             })
             .catch((err) => {
-                const response = err.response;
-                if (response && response.status === 422) {
-                    setErrors(response.data.errors);
-                }
+                setLoading(false);
+                console.error(err);
             });
     };
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
     const nameRef = useRef();
     //add user
     const onSubmit = (ev) => {
@@ -142,6 +126,7 @@ export default function Modals() {
                 }
             });
     };
+
     return (
         <section className=" dark:bg-gray-900 mt-20">
             <div className="mx-auto max-w-screen-xl px-6 lg:px-6">
@@ -670,72 +655,54 @@ export default function Modals() {
                                 </tbody>
                             )}
                         </table>
-                    </div>
-                    {/* <nav
-                        className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
-                        aria-label="Table navigation"
-                    >
-                        <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                            Showing
-                            <span className="font-semibold text-gray-900 dark:text-white">
-                                1-10
-                            </span>
-                            of
-                            <span className="font-semibold text-gray-900 dark:text-white">
-                                1000
-                            </span>
-                        </span>
-                        <ul className="inline-flex items-stretch -space-x-px">
-                            <li>
-                                <a
-                                    onClick={prevPage}
-                                    disabled={currentPage === 1}
-                                    className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >
-                                    <span className="sr-only">Previous</span>
-                                    <svg
-                                        className="w-5 h-5"
-                                        aria-hidden="true"
-                                        fill="currentColor"
-                                        viewbox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </a>
-                            </li>
+                        {/* Pagination Controls */}
+                        <div className="pagination flex justify-center space-x-2 mt-6">
+                            {/* Previous Button */}
+                            <button
+                                onClick={() =>
+                                    handlePageChange(currentPage - 1)
+                                }
+                                className={`px-4 py-2 rounded ${
+                                    currentPage === 1
+                                        ? "bg-gray-300 cursor-not-allowed"
+                                        : "bg-blue-500 text-white"
+                                }`}
+                                disabled={currentPage === 1}
+                            >
+                                Prev
+                            </button>
 
-                            <li>
-                                <a
-                                    onClick={nextPage}
-                                    disabled={
-                                        currentPage ===
-                                        Math.ceil(users.length / itemsPerPage)
-                                    }
-                                    className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                            {/* Page Numbers */}
+                            {Array.from({ length: totalpages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handlePageChange(index + 1)}
+                                    className={`px-4 py-2 rounded ${
+                                        currentPage === index + 1
+                                            ? "bg-blue-500 text-white"
+                                            : "bg-gray-300 hover:bg-gray-400"
+                                    }`}
                                 >
-                                    <span className="sr-only">Next</span>
-                                    <svg
-                                        className="w-5 h-5"
-                                        aria-hidden="true"
-                                        fill="currentColor"
-                                        viewbox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav> */}
+                                    {index + 1}
+                                </button>
+                            ))}
+
+                            {/* Next Button */}
+                            <button
+                                onClick={() =>
+                                    handlePageChange(currentPage + 1)
+                                }
+                                className={`px-4 py-2 rounded ${
+                                    currentPage === totalpages
+                                        ? "bg-gray-300 cursor-not-allowed"
+                                        : "bg-blue-500 text-white"
+                                }`}
+                                disabled={currentPage === totalpages}
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

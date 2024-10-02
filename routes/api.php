@@ -54,7 +54,8 @@ Route::middleware(['auth:api', 'checkUserId'])->group(function () {
     Route::get('initialretours', [RetourController::class, 'initialretours']);
     Route::get('inprogresretours', [RetourController::class, 'inprogresretours']);
     Route::get('retoursbyproduct', [RetourController::class, 'retoursbyproduct']);
-
+    Route::get('retoursbypiece', [RetourController::class, 'retoursbypiece']);
+    Route::get('retoursbyissue', [RetourController::class, 'retoursbyissue']);
     Route::apiResources(['stocks' => StockController::class]);
 
 
