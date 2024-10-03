@@ -294,6 +294,22 @@ class RetourController extends Controller
         return response()->json($retoursByIssue);
     }
 
+    public function retoursbydist()
+    {
+        $retoursByDist = DB::table('retours')
+            ->join('products', 'retours.product_id', '=', 'products.id')
+            ->join('distributeurs', 'products.dist_id', '=', 'distributeurs.id')
+            ->join('users', 'distributeurs.user_id', '=', 'users.id')
+            ->select(
+                'users.name as dist_name',
+                DB::raw('count(retours.id) as total_retours')
+            )
+            ->groupBy('dist_name')
+            ->get();
+
+        return response()->json($retoursByDist);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

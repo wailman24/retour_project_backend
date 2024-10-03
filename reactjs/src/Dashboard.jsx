@@ -125,6 +125,28 @@ function Dashboard() {
                 console.error(err);
             });
     };
+
+    const [distData, setDistData] = useState([]);
+
+    useEffect(() => {
+        getRbydist();
+    }, []);
+
+    const getRbydist = () => {
+        axiosClient
+            .get("/retoursbydist")
+            .then(({ data }) => {
+                console.log(data); // Removed .data if the structure is simpler
+                const formattedData = data.map((item) => ({
+                    distname: item.dist_name,
+                    count: item.total_retours,
+                }));
+                setDistData(formattedData);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
     // Custom Tooltip Component
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
@@ -294,22 +316,19 @@ function Dashboard() {
                     </ResponsiveContainer>
                 </div>
 
-                {/* Area Chart */}
                 <div className="p-6 bg-white rounded-lg shadow-lg">
-                    <h2 className="mb-4 text-lg font-semibold">Sales Trend</h2>
+                    <h2 className="mb-4 text-lg font-semibold">
+                        Retours by distributeurs
+                    </h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart data={data}>
+                        <BarChart data={distData}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
+                            <XAxis dataKey="distname" />
                             <YAxis />
                             <Tooltip />
-                            <Area
-                                type="monotone"
-                                dataKey="sales"
-                                stroke="#8884d8"
-                                fill="#8884d8"
-                            />
-                        </AreaChart>
+                            {/* Use the custom tooltip */}
+                            <Bar dataKey="count" fill="#82ca9d" />
+                        </BarChart>
                     </ResponsiveContainer>
                 </div>
             </div>
