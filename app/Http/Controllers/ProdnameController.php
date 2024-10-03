@@ -13,7 +13,13 @@ class ProdnameController extends Controller
      */
     public function index()
     {
+
+        // Fetch paginated results from the modals table
+        //$prods = Prodname::paginate(1);
+        //return new ProdnamesResource($prods);
         return ProdnamesResource::collection(Prodname::all());
+        // Return the paginated data
+        //return response()->json($prods);
     }
 
     /**

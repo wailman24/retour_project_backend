@@ -32,7 +32,7 @@ class StockController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required',
             'quantity' => 'required|integer|min:1',
         ]);
 

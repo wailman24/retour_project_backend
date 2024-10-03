@@ -13,16 +13,7 @@ class ModalController extends Controller
      */
     public function index()
     {
-        // Set the number of items per page
-        $perPage = 10; // You can change this number
-
-        // Fetch paginated results from the modals table
-        $modals = Modal::paginate($perPage);
-
-        // Return the paginated data
-        return response()->json($modals);
-
-        /* return ModalsResource::collection(Modal::all()); */
+        return ModalsResource::collection(Modal::all());
     }
 
     /**

@@ -32,27 +32,22 @@ export default function Modals() {
     ///
     const [users, setUsers] = useState([]);
 
-    const [totalpages, setTotalPages] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-
     //search
     const [search_name, setSearch_name] = useState("");
     const [search_date, setSearch_date] = useState("");
 
     const [modals, setModals] = useState([]);
     useEffect(() => {
-        getModals(currentPage);
-    }, [currentPage]);
+        getModals();
+    }, []);
 
-    const getModals = (page = 1) => {
+    const getModals = () => {
         setLoading(true);
         axiosClient
-            .get(`/modals?page=${page}`)
+            .get(`/modals`)
             .then(({ data }) => {
                 console.log("API Response:", data); // For debugging
                 setModals(data.data); // Set the modals for the current page
-                setTotalPages(data.last_page); // Set the total number of pages
-                setCurrentPage(data.current_page); // Set the current page
                 setLoading(false);
             })
             .catch((err) => {
@@ -60,10 +55,28 @@ export default function Modals() {
                 console.error(err);
             });
     };
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 10;
+    const lastIndex = currentPage * recordsPerPage;
+    const firstIndex = lastIndex - recordsPerPage;
+    const records = modals.slice(firstIndex, lastIndex);
+    const npage = Math.ceil(modals.length / recordsPerPage);
+    const numbers = [...Array(npage + 1).keys()].slice(1);
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+    function prePage() {
+        if (currentPage !== 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+    function changeCPage(id) {
+        setCurrentPage(id);
+    }
+    function nextPage() {
+        if (currentPage !== npage) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
     const nameRef = useRef();
     //add user
     const onSubmit = (ev) => {
@@ -540,7 +553,7 @@ export default function Modals() {
                             )}
                             {!loading && (
                                 <tbody>
-                                    {modals
+                                    {records
                                         .filter((d) => {
                                             return search_name.toLowerCase() ===
                                                 ""
@@ -655,53 +668,51 @@ export default function Modals() {
                                 </tbody>
                             )}
                         </table>
-                        {/* Pagination Controls */}
-                        <div className="pagination flex justify-center space-x-2 mt-6">
-                            {/* Previous Button */}
-                            <button
-                                onClick={() =>
-                                    handlePageChange(currentPage - 1)
-                                }
-                                className={`px-4 py-2 rounded ${
-                                    currentPage === 1
-                                        ? "bg-gray-300 cursor-not-allowed"
-                                        : "bg-blue-500 text-white"
-                                }`}
-                                disabled={currentPage === 1}
-                            >
-                                Prev
-                            </button>
-
-                            {/* Page Numbers */}
-                            {Array.from({ length: totalpages }, (_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => handlePageChange(index + 1)}
-                                    className={`px-4 py-2 rounded ${
-                                        currentPage === index + 1
-                                            ? "bg-blue-500 text-white"
-                                            : "bg-gray-300 hover:bg-gray-400"
-                                    }`}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
-
-                            {/* Next Button */}
-                            <button
-                                onClick={() =>
-                                    handlePageChange(currentPage + 1)
-                                }
-                                className={`px-4 py-2 rounded ${
-                                    currentPage === totalpages
-                                        ? "bg-gray-300 cursor-not-allowed"
-                                        : "bg-blue-500 text-white"
-                                }`}
-                                disabled={currentPage === totalpages}
-                            >
-                                Next
-                            </button>
-                        </div>
+                        <nav className="flex justify-center mt-4 mb-4">
+                            <ul className="inline-flex items-center space-x-2">
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={`px-3 py-1 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 ${
+                                            currentPage === 1
+                                                ? "cursor-not-allowed opacity-50"
+                                                : ""
+                                        }`}
+                                        onClick={prePage}
+                                    >
+                                        Prev
+                                    </a>
+                                </li>
+                                {numbers.map((n, i) => (
+                                    <li key={i}>
+                                        <a
+                                            href="#"
+                                            className={`px-3 py-1 border rounded-md ${
+                                                currentPage === n
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                                            }`}
+                                            onClick={() => changeCPage(n)}
+                                        >
+                                            {n}
+                                        </a>
+                                    </li>
+                                ))}
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={`px-3 py-1 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 ${
+                                            currentPage === npage
+                                                ? "cursor-not-allowed opacity-50"
+                                                : ""
+                                        }`}
+                                        onClick={nextPage}
+                                    >
+                                        Next
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

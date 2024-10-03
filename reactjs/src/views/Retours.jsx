@@ -35,27 +35,6 @@ export default function Retours() {
     const [search_retour, setSearch_retour] = useState("");
     //const [dists, setDists] = useState([]);
 
-    /*     const itemsPerPage = 10; // Number of items per page
-    const [currentPage, setCurrentPage] = useState(1);
-
-    // Calculate pagination boundaries
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-
-    // Change page
-    const nextPage = () => {
-        if (currentPage < Math.ceil(users.length / itemsPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    }; */
-
     const [retours, setRetours] = useState([]);
     useEffect(() => {
         getRetours();
@@ -91,6 +70,27 @@ export default function Retours() {
                 });
         }
     };
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 10;
+    const lastIndex = currentPage * recordsPerPage;
+    const firstIndex = lastIndex - recordsPerPage;
+    const records = retours.slice(firstIndex, lastIndex);
+    const npage = Math.ceil(retours.length / recordsPerPage);
+    const numbers = [...Array(npage + 1).keys()].slice(1);
+
+    function prePage() {
+        if (currentPage !== 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+    function changeCPage(id) {
+        setCurrentPage(id);
+    }
+    function nextPage() {
+        if (currentPage !== npage) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
 
     const handleViewDetails = (id) => {
         if (user.role_id == 3) {
@@ -187,7 +187,7 @@ export default function Retours() {
                             </form>
                         </div>
                         <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                            {retours
+                            {records
                                 .filter((b) => {
                                     return search_retour.toLowerCase() === ""
                                         ? b
@@ -297,104 +297,47 @@ export default function Retours() {
                                     </div>
                                 ))}
 
-                            <nav
-                                className="mt-6 flex items-center justify-center sm:mt-8"
-                                aria-label="Page navigation example"
-                            >
-                                <ul className="flex h-8 items-center -space-x-px text-sm">
+                            <nav className="flex justify-center mt-4 mb-4">
+                                <ul className="inline-flex items-center space-x-2">
                                     <li>
                                         <a
                                             href="#"
-                                            className="ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                            className={`px-3 py-1 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 ${
+                                                currentPage === 1
+                                                    ? "cursor-not-allowed opacity-50"
+                                                    : ""
+                                            }`}
+                                            onClick={prePage}
                                         >
-                                            <span className="sr-only">
-                                                Previous
-                                            </span>
-                                            <svg
-                                                className="h-4 w-4 rtl:rotate-180"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
+                                            Prev
+                                        </a>
+                                    </li>
+                                    {numbers.map((n, i) => (
+                                        <li key={i}>
+                                            <a
+                                                href="#"
+                                                className={`px-3 py-1 border rounded-md ${
+                                                    currentPage === n
+                                                        ? "bg-blue-600 text-white border-blue-600"
+                                                        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                                                }`}
+                                                onClick={() => changeCPage(n)}
                                             >
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="m15 19-7-7 7-7"
-                                                />
-                                            </svg>
-                                        </a>
-                                    </li>
+                                                {n}
+                                            </a>
+                                        </li>
+                                    ))}
                                     <li>
                                         <a
                                             href="#"
-                                            className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                            className={`px-3 py-1 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 ${
+                                                currentPage === npage
+                                                    ? "cursor-not-allowed opacity-50"
+                                                    : ""
+                                            }`}
+                                            onClick={nextPage}
                                         >
-                                            1
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        >
-                                            2
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            aria-current="page"
-                                            className="z-10 flex h-8 items-center justify-center border border-primary-300 bg-primary-50 px-3 leading-tight text-primary-600 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                                        >
-                                            3
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        >
-                                            ...
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        >
-                                            100
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            className="flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        >
-                                            <span className="sr-only">
-                                                Next
-                                            </span>
-                                            <svg
-                                                className="h-4 w-4 rtl:rotate-180"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="m9 5 7 7-7 7"
-                                                />
-                                            </svg>
+                                            Next
                                         </a>
                                     </li>
                                 </ul>

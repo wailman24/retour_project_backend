@@ -32,46 +32,46 @@ export default function ProductsName() {
     ///
     const [modals, setModals] = useState([]);
 
-    /*     const itemsPerPage = 10; // Number of items per page
-    const [currentPage, setCurrentPage] = useState(1);
-
-    // Calculate pagination boundaries
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-
-    // Change page
-    const nextPage = () => {
-        if (currentPage < Math.ceil(users.length / itemsPerPage)) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    }; */
     const [prods, setProds] = useState([]);
     useEffect(() => {
         getProds();
     }, []);
 
-    const getProds = () => {
+    const getProds = (page = 1) => {
         setLoading(true);
         axiosClient
-            .get("/prodnames")
+            .get(`/prodnames`)
             .then(({ data }) => {
+                console.log("API Response:", data.data); // For debugging
+                setProds(data.data); // Set the modals for the current page
                 setLoading(false);
-                setProds(data.data);
             })
             .catch((err) => {
-                const response = err.response;
-                if (response && response.status === 422) {
-                    setErrors(response.data.errors);
-                }
+                setLoading(false);
+                console.error(err);
             });
     };
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 10;
+    const lastIndex = currentPage * recordsPerPage;
+    const firstIndex = lastIndex - recordsPerPage;
+    const records = prods.slice(firstIndex, lastIndex);
+    const npage = Math.ceil(prods.length / recordsPerPage);
+    const numbers = [...Array(npage + 1).keys()].slice(1);
+
+    function prePage() {
+        if (currentPage !== 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+    function changeCPage(id) {
+        setCurrentPage(id);
+    }
+    function nextPage() {
+        if (currentPage !== npage) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
     //search
     const [search_name, setSearch_name] = useState("");
     const [search_modal, setSearch_modal] = useState("");
@@ -164,6 +164,7 @@ export default function ProductsName() {
                 }
             });
     };
+
     return (
         <section className=" dark:bg-gray-900 mt-20">
             <div className="mx-auto max-w-screen-xl px-6 lg:px-6">
@@ -690,7 +691,7 @@ export default function ProductsName() {
                             )}
                             {!loading && (
                                 <tbody>
-                                    {prods
+                                    {records
                                         .filter((d) => {
                                             return search_name.toLowerCase() ===
                                                 ""
@@ -819,72 +820,91 @@ export default function ProductsName() {
                                 </tbody>
                             )}
                         </table>
-                    </div>
-                    {/* <nav
-                        className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
-                        aria-label="Table navigation"
-                    >
-                        <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                            Showing
-                            <span className="font-semibold text-gray-900 dark:text-white">
-                                1-10
-                            </span>
-                            of
-                            <span className="font-semibold text-gray-900 dark:text-white">
-                                1000
-                            </span>
-                        </span>
-                        <ul className="inline-flex items-stretch -space-x-px">
-                            <li>
-                                <a
-                                    onClick={prevPage}
-                                    disabled={currentPage === 1}
-                                    className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >
-                                    <span className="sr-only">Previous</span>
-                                    <svg
-                                        className="w-5 h-5"
-                                        aria-hidden="true"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg"
+                        {/* <nav>
+                            <ul className="pagination">
+                                <li className="page-item">
+                                    <a
+                                        href="#"
+                                        className="page-link"
+                                        onClick={prePage}
                                     >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </a>
-                            </li>
+                                        Prev
+                                    </a>
+                                </li>
+                                {numbers.map((n, i) => (
+                                    <li
+                                        className={`page-item ${
+                                            currentPage === n ? "active" : ""
+                                        }`}
+                                        key={i}
+                                    >
+                                        <a
+                                            href="#"
+                                            className="page-link"
+                                            onClick={() => changeCPage(n)}
+                                        >
+                                            {n}
+                                        </a>
+                                    </li>
+                                ))}
+                                <li className="page-item">
+                                    <a
+                                        href="#"
+                                        className="page-link"
+                                        onClick={nextPage}
+                                    >
+                                        Next
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav> */}
 
-                            <li>
-                                <a
-                                    onClick={nextPage}
-                                    disabled={
-                                        currentPage ===
-                                        Math.ceil(users.length / itemsPerPage)
-                                    }
-                                    className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                                >
-                                    <span className="sr-only">Next</span>
-                                    <svg
-                                        className="w-5 h-5"
-                                        aria-hidden="true"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg"
+                        <nav className="flex justify-center mt-4 mb-4">
+                            <ul className="inline-flex items-center space-x-2">
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={`px-3 py-1 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 ${
+                                            currentPage === 1
+                                                ? "cursor-not-allowed opacity-50"
+                                                : ""
+                                        }`}
+                                        onClick={prePage}
                                     >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                            clip-rule="evenodd"
-                                        />
-                                    </svg>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav> */}
+                                        Prev
+                                    </a>
+                                </li>
+                                {numbers.map((n, i) => (
+                                    <li key={i}>
+                                        <a
+                                            href="#"
+                                            className={`px-3 py-1 border rounded-md ${
+                                                currentPage === n
+                                                    ? "bg-blue-600 text-white border-blue-600"
+                                                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                                            }`}
+                                            onClick={() => changeCPage(n)}
+                                        >
+                                            {n}
+                                        </a>
+                                    </li>
+                                ))}
+                                <li>
+                                    <a
+                                        href="#"
+                                        className={`px-3 py-1 bg-gray-200 border border-gray-300 rounded-md hover:bg-gray-300 ${
+                                            currentPage === npage
+                                                ? "cursor-not-allowed opacity-50"
+                                                : ""
+                                        }`}
+                                        onClick={nextPage}
+                                    >
+                                        Next
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </section>
