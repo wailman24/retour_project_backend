@@ -10,10 +10,14 @@ export default function DefaultLayout() {
     if (!token) {
         return <Navigate to="/login" />;
     }
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const handleUserDropdownToggle = () => {
+        setIsUserDropdownOpen(!isUserDropdownOpen);
+    };
 
-    const handleDropdownToggle = () => {
-        setIsDropdownOpen(!isDropdownOpen);
+    const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
+    const handleProductsDropdownToggle = () => {
+        setIsProductsDropdownOpen(!isProductsDropdownOpen);
     };
     const onLogout = (ev) => {
         ev.preventDefault();
@@ -95,9 +99,6 @@ export default function DefaultLayout() {
                                     </a>
                                 </div>
                             </DropdownItem>
-                            <DropdownItem>Cart</DropdownItem>
-                            <DropdownItem>Orders</DropdownItem>
-                            <DropdownItem>Preferences</DropdownItem>
                             <DropdownItem>
                                 <a onClick={onLogout}>Logout</a>
                             </DropdownItem>
@@ -133,201 +134,259 @@ export default function DefaultLayout() {
                                 </Link>
                             </li>
                         )}
-                        <li>
-                            <button
-                                type="button"
-                                className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                                aria-controls="dropdown-example"
-                                aria-expanded={isDropdownOpen}
-                                onClick={handleDropdownToggle}
-                            >
-                                <svg
-                                    className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 18 21"
+                        {user.role_id == 1 && (
+                            <li>
+                                <button
+                                    type="button"
+                                    className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                    aria-controls="dropdown-example"
+                                    aria-expanded={isUserDropdownOpen}
+                                    onClick={handleUserDropdownToggle}
                                 >
-                                    <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
-                                </svg>
-                                <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
-                                    Users
-                                </span>
-                                <svg
-                                    className="w-3 h-3"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 10 6"
+                                    <svg
+                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 18 21"
+                                    >
+                                        <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
+                                    </svg>
+                                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
+                                        Users
+                                    </span>
+                                    <svg
+                                        className="w-3 h-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
+                                    </svg>
+                                </button>
+                                <ul
+                                    id="dropdown-example"
+                                    className={`${
+                                        isUserDropdownOpen ? "" : "hidden"
+                                    } py-2 space-y-2`}
                                 >
-                                    <path
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="m1 1 4 4 4-4"
-                                    />
-                                </svg>
-                            </button>
-                            <ul
-                                id="dropdown-example"
-                                className={`${
-                                    isDropdownOpen ? "" : "hidden"
-                                } py-2 space-y-2`}
-                            >
-                                <li>
-                                    <Link
-                                        to="/users"
-                                        //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                                    >
-                                        <a
-                                            href="#"
-                                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                    <li>
+                                        <Link
+                                            to="/users"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                                         >
-                                            Users list
-                                        </a>
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        to="/distributeurs"
-                                        //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                                    >
-                                        <a
-                                            href="#"
-                                            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                Users list
+                                            </a>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/distributeurs"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                                         >
-                                            Distributeurs
-                                        </a>
-                                    </Link>
-                                </li>
-                            </ul>
-                        </li>
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                Distributeurs
+                                            </a>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                        )}
+                        {user.role_id == 1 && (
+                            <li>
+                                <button
+                                    type="button"
+                                    className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                    aria-controls="dropdown-example"
+                                    aria-expanded={isProductsDropdownOpen}
+                                    onClick={handleProductsDropdownToggle}
+                                >
+                                    <svg
+                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 18 21"
+                                    >
+                                        <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
+                                    </svg>
+                                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
+                                        produits
+                                    </span>
+                                    <svg
+                                        className="w-3 h-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
+                                    </svg>
+                                </button>
+                                <ul
+                                    id="dropdown-example"
+                                    className={`${
+                                        isProductsDropdownOpen ? "" : "hidden"
+                                    } py-2 space-y-2`}
+                                >
+                                    <li>
+                                        <Link
+                                            to="/modals"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                        >
+                                            {/* <svg
+                                            className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 18"
+                                        >
+                                            <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                                        </svg>
+                                        <span className="flex-1 ms-3 whitespace-nowrap">
+                                            Modals
+                                        </span> */}
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                les modals
+                                            </a>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/prodnames"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                        >
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                Nom des Produits
+                                            </a>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/products"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                        >
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                Les Produits
+                                            </a>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                        )}
 
                         {user.role_id == 1 && (
                             <li>
-                                <Link
-                                    to="/modals"
-                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                <button
+                                    type="button"
+                                    className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                    aria-controls="dropdown-example"
+                                    aria-expanded={isProductsDropdownOpen}
+                                    onClick={handleProductsDropdownToggle}
                                 >
                                     <svg
-                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="currentColor"
-                                        viewBox="0 0 20 18"
+                                        viewBox="0 0 18 21"
                                     >
-                                        <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                                        <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
                                     </svg>
-                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                        Modals
+                                    <span className="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">
+                                        pieces
                                     </span>
-                                </Link>
-                            </li>
-                        )}
-                        {user.role_id == 1 && (
-                            <li>
-                                <Link
-                                    to="/prodnames"
-                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                                >
                                     <svg
-                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                                        className="w-3 h-3"
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 18"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
                                     >
-                                        <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
                                     </svg>
-                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                        Products Name
-                                    </span>
-                                </Link>
-                            </li>
-                        )}
-                        {user.role_id == 1 && (
-                            <li>
-                                <Link
-                                    to="/products"
-                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                </button>
+                                <ul
+                                    id="dropdown-example"
+                                    className={`${
+                                        isProductsDropdownOpen ? "" : "hidden"
+                                    } py-2 space-y-2`}
                                 >
-                                    <svg
-                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 18"
-                                    >
-                                        <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                                    </svg>
-                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                        Products
-                                    </span>
-                                </Link>
-                            </li>
-                        )}
-                        {user.role_id == 1 && (
-                            <li>
-                                <Link
-                                    to="/pieces"
-                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                                >
-                                    <svg
-                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 18"
-                                    >
-                                        <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                                    </svg>
-                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                        Pieces
-                                    </span>
-                                </Link>
-                            </li>
-                        )}
-                        {user.role_id == 1 && (
-                            <li>
-                                <Link
-                                    to="/stocks"
-                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                                >
-                                    <svg
-                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 18"
-                                    >
-                                        <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                                    </svg>
-                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                        Pieces Stock
-                                    </span>
-                                </Link>
-                            </li>
-                        )}
-                        {user.role_id == 1 && (
-                            <li>
-                                <Link
-                                    to="/issues"
-                                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                                >
-                                    <svg
-                                        className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 18"
-                                    >
-                                        <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                                    </svg>
-                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                        Issues
-                                    </span>
-                                </Link>
+                                    <li>
+                                        <Link
+                                            to="/pieces"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                        >
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                les pieces
+                                            </a>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/stocks"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                        >
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                Stocks de Pieces
+                                            </a>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link
+                                            to="/issues"
+                                            //className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                        >
+                                            <a
+                                                href="#"
+                                                className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                                            >
+                                                Les Problèmes
+                                            </a>
+                                        </Link>
+                                    </li>
+                                </ul>
                             </li>
                         )}
 
