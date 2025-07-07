@@ -11,8 +11,6 @@ Backend API for the Retour Project.
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [API Documentation](#api-documentation)
-- [Testing](#testing)
-- [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
